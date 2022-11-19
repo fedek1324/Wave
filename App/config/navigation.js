@@ -1,7 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, TouchableOpacity } from "react-native";
 
 import Loading from "../screens/Loading";
 import Welcome from "../screens/Welcome";
@@ -21,14 +20,17 @@ const MainStackScreen = () => (
     <MainStack.Screen
       name="Welcome"
       component={Welcome}
-      options={{ headerShown: false }}
+      options={{ 
+        headerShown: false,
+        title: "Приветствие",
+      }}
     />
     <MainStack.Screen
       name="Quiz"
       component={Quiz}
       options={{
         headerShown: true,
-        title: "Небольшая анкета",
+        title: "Анкета",
         headerRight: () => (
           <HeaderButton text="Пропустить" onPress={() => console.log("Skip")} />
         ),
