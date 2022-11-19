@@ -40,12 +40,20 @@ const getUser = (userId) => {
   // Всё это чтобы пользователю не пришлось вызывать get(..) и потом делать result.val()
   const dbRef = ref(database)
   const getUserFireBasePromise = get(child(dbRef, `users/${userId}`)) // Promise
-  return new Promise( resolve => {
-    getUserFireBasePromise.then( snapshot => {
-      if (snapshot.exists()) {
-        resolve(snapshot.val())
-      }
-    })
+  return new Promise( (resolve, reject) => {
+    getUserFireBasePromise
+      .then( snapshot => {
+        if (snapshot.exists()) {
+          resolve(snapshot.val())
+        }
+        else {
+          reject( Error("No data available"))
+        }
+      })
+      .catch( error => {
+        reject(error)
+      })
+
   })
 }
 

@@ -1,21 +1,39 @@
-import React from "react"
-import { NavigationContainer } from "@react-navigation/native"
-import { createStackNavigator } from "@react-navigation/stack"
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Text, TouchableOpacity } from "react-native";
 
-import Home from "../screens/Home"
+import Loading from "../screens/Loading";
+import Welcome from "../screens/Welcome";
+import Quiz from "../screens/Quiz";
 
+import HeaderButton from "../components/HeaderButton";
 
 const MainStack = createStackNavigator();
 const MainStackScreen = () => (
   // headerMode="none"
-  // initialRouteName="Options"
-  <MainStack.Navigator>
+  <MainStack.Navigator initialRouteName="Quiz">
     <MainStack.Screen
-      name="Home"
-      component={Home}
+      name="Loading"
+      component={Loading}
       options={{ headerShown: false }}
     />
-    {/* <MainStack.Screen name="Options" component={Options} /> */}
+    <MainStack.Screen
+      name="Welcome"
+      component={Welcome}
+      options={{ headerShown: false }}
+    />
+    <MainStack.Screen
+      name="Quiz"
+      component={Quiz}
+      options={{
+        headerShown: true,
+        title: "Небольшая анкета",
+        headerRight: () => (
+          <HeaderButton text="Пропустить" onPress={() => console.log("Skip")} />
+        ),
+      }}
+    />
   </MainStack.Navigator>
 );
 
