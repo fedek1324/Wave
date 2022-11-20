@@ -10,6 +10,10 @@ export default {
     lightBlue: "rgba(0, 122, 255, 0.15)",
 
     defaultSystemBlueLight: "#007AFF",
+    tertiary: "#C5C5C7",
+    systemGreenLight: "#34C759",
+    fillLightSecondary: "#E9E9EA",
+    iosBackgroundColor: "#3e3e3e",
 
 
 }
