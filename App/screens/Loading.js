@@ -3,7 +3,7 @@ import { View, StyleSheet, StatusBar, Image, Dimensions, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/colors";
 
-import { api } from "../util/api";
+import { apiTest } from "../util/api";
 
 const screen = Dimensions.get("window");
 
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 });
 
 export default ({ navigation }) => {
-  api()
+  apiTest()
     .then((res) => {
       console.log("result", res);
       navigation.push("Welcome")

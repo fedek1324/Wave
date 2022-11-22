@@ -4,20 +4,17 @@ import {
   StyleSheet,
   StatusBar,
   Image,
-  Dimensions,
   Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import colors from "../constants/colors";
 import paddings from "../constants/paddings";
-import { api } from "../util/api";
 import { BoldButton, RegularButton } from "../components/Buttons";
 
 import Lock from "../assets/icons/lock"
 import PaperPlane from "../assets/icons/paperPlane"
 
-const screen = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -77,7 +74,7 @@ export default ({ navigation }) => {
             onPress={() => {
               console.log("pressed button");
             }}
-            text="Начать"
+            text="Есть пароль"
           />
         </View>
       </SafeAreaView>

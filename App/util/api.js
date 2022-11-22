@@ -103,4 +103,8 @@ export const apiTest = () => {
     }
   });
 
+  return new Promise( (resolve, reject) => {
+    resolve("ok")
+  })
+
 };
