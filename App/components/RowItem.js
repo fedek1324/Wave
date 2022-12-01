@@ -2,14 +2,17 @@ import React from "react";
 import {Text, TouchableOpacity, StyleSheet, View } from "react-native"; // Импорт по именам
 import colors from "../constants/colors"
 
+// TODO add left icon
+
 const styles = StyleSheet.create({
     row: {
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         paddingVertical: 16,
         justifyContent: "space-between",
         alignItems: "center",
         flexDirection: "row",
         backgroundColor: colors.white,
+        color: "#FF4662",
     },
     title: {
         fontSize: 16,
@@ -23,9 +26,9 @@ const styles = StyleSheet.create({
 })
 
 
-export const RowItem = ({ title, onPress, rightIcon }) => (
+export const RowItem = ({ title, onPress, rightIcon, textStyle ={} }) => (
   <TouchableOpacity onPress={onPress} style={styles.row}>
-    <Text style={styles.title}>{title}</Text>
+    <Text style={[styles.title, textStyle]}>{title}</Text>
     {rightIcon && rightIcon}
   </TouchableOpacity>
 )

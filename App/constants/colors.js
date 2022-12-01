@@ -12,8 +12,11 @@ export default {
     defaultSystemBlueLight: "#007AFF",
     tertiary: "#C5C5C7",
     systemGreenLight: "#34C759",
+    systemGrayLight: "#8E8E93",
     fillLightSecondary: "#E9E9EA",
     iosBackgroundColor: "#3e3e3e",
-
+    systemGray06Light: "#F2F2F7",
+    navBarBackground: "#F4F4F4",
+    systemRedLight: "#FF3B30",
 
 }

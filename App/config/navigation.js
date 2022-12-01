@@ -6,12 +6,16 @@ import { Text, TouchableOpacity } from "react-native";
 import Loading from "../screens/Loading";
 import Welcome from "../screens/Welcome";
 import Quiz from "../screens/Quiz";
+import RegistrationFinish from "../screens/RegistrationFinish";
 
 import HeaderButton from "../components/HeaderButton";
 import Selection from "../screens/Selection";
+import Announcements from "../screens/Messages";
+import Channels from "../screens/Channels";
+import Settings from "../screens/Settings";
 
 const MainStack = createStackNavigator();
-const MainStackScreen = () => (
+const MainStackScreen = ({navigation}) => (
   // headerMode="none"
   <MainStack.Navigator initialRouteName="Loading">
     <MainStack.Screen
@@ -34,10 +38,42 @@ const MainStackScreen = () => (
         headerShown: true,
         title: "Анкета",
         headerRight: () => (
-          <HeaderButton text="Пропустить" onPress={() => console.log("Skip")} />
+          <HeaderButton text="Пропустить" onPress={() => navigation.push("RegistrationFinish")} />
         ),
       }}
     />
+    <MainStack.Screen
+      name="RegistrationFinish"
+      component={RegistrationFinish}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <MainStack.Screen
+      name="Messages"
+      component={Announcements}
+      options={{
+        headerShown: true,
+        title: "Объявления",
+      }}
+    />
+    <MainStack.Screen
+      name="Channels"
+      component={Channels}
+      options={{
+        headerShown: true,
+        title: "Каналы",
+      }}
+    />
+    <MainStack.Screen
+      name="Settings"
+      component={Settings}
+      options={{
+        headerShown: true,
+        title: "Настройки",
+      }}
+    />
+
   </MainStack.Navigator>
 );
 
@@ -45,7 +81,7 @@ const ModalStack = createStackNavigator();
 const ModalStackScreen = () => (
   <ModalStack.Navigator screenOptions={{ presentation: "modal" }}>
     <ModalStack.Screen
-      name="Main"
+      name="Назад"
       component={MainStackScreen}
       options={{ headerShown: false }}
     />
@@ -54,11 +90,6 @@ const ModalStackScreen = () => (
       component={Selection}
       options={({ navigation, route }) => ({
         title: route.params && route.params.title,
-        headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.pop()}>
-            <Text>Назад</Text>
-          </TouchableOpacity>
-        ),
       })}
     />
   </ModalStack.Navigator>
