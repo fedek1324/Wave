@@ -18,5 +18,6 @@ export default {
     systemGray06Light: "#F2F2F7",
     navBarBackground: "#F4F4F4",
     systemRedLight: "#FF3B30",
+    separatorLightNoTransparency: "#C6C6C8",
 
 }

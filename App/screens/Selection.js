@@ -5,6 +5,8 @@ import { RowItem } from "../components/RowItem";
 import colors from "../constants/colors";
 import paddings from "../constants/paddings";
 
+// TODO rename setState
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

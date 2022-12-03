@@ -26,7 +26,7 @@ export default ({ navigation }) => {
   const [username, setUsername] = useState("Пользователь: ");
   if (username === "Пользователь: ") {
     getCurrentUser().then((user) => {
-      setUsername(`Пользователь: ${user.uid}`);
+      setUsername(`Пользователь: ${user.uid}\n${user.email ? `Администратор: ${user.email}` : "Обычный пользователь"}`);
     });
   }
 

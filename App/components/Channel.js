@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, Image } from "react-native"; // Импорт по именам
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native"; // Импорт по именам
 
 import colors from "../constants/colors";
 import fonts from "../constants/fonts";
@@ -53,27 +53,30 @@ export const Channel = ({
   description,
   selected = false,
   style = {},
+  onPress = () => {}
 }) => (
-  <View style={[styles.channelContainer, style]}>
-    <View style={styles.content}>
-      <Image
-        style={styles.image}
-        source={{ uri: imageUri }}
-        resizeMode="contain"
-      />
-      <View style={styles.infoContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+  <TouchableOpacity onPress={onPress}>
+    <View style={[styles.channelContainer, style]}>
+      <View style={styles.content}>
+        <Image
+          style={styles.image}
+          source={{ uri: imageUri }}
+          resizeMode="contain"
+        />
+        <View style={styles.infoContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+        </View>
       </View>
+      {selected ? (
+        <Image
+          style={styles.checkMark}
+          source={checkMark} // автоматически подбирает 1х 2х или 3х
+          resizeMode="contain"
+        />
+      ) : (
+        <ChevronRight />
+      )}
     </View>
-    {selected ? (
-      <Image
-        style={styles.checkMark}
-        source={checkMark} // автоматически подбирает 1х 2х или 3х
-        resizeMode="contain"
-      />
-    ) : (
-      <ChevronRight />
-    )}
-  </View>
+  </TouchableOpacity>
 );

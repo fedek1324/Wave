@@ -13,6 +13,9 @@ import Selection from "../screens/Selection";
 import Announcements from "../screens/Messages";
 import Channels from "../screens/Channels";
 import Settings from "../screens/Settings";
+import Login from "../screens/Login";
+import ChannelMenu from "../screens/ChannelMenu";
+import SendMessage from "../screens/SendMessage";
 
 const MainStack = createStackNavigator();
 const MainStackScreen = ({navigation}) => (
@@ -72,6 +75,29 @@ const MainStackScreen = ({navigation}) => (
         headerShown: true,
         title: "Настройки",
       }}
+    />
+    <MainStack.Screen
+      name="Login"
+      component={Login}
+      options={{
+        headerShown: true,
+        title: "Вход",
+      }}
+    />
+    <MainStack.Screen
+      name="ChannelMenu"
+      component={ChannelMenu}
+      options={({ navigationChannelsMenu, route }) => ({
+        // header shown true is default
+        title: route.params && route.params.title,
+      })}
+    />
+    <MainStack.Screen
+      name="SendMessage"
+      component={SendMessage}
+      options={({ navigationChannelsMenu, route }) => ({
+        title: route.params && route.params.title,
+      })}
     />
 
   </MainStack.Navigator>

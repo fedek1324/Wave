@@ -19,7 +19,13 @@ import PaperPlane from "../assets/icons/paperPlane";
 import fonts from "../constants/fonts";
 import { Channel } from "../components/Channel";
 
-import { getCurrentUser, getUserChannels, createMessage, getChannelMessages, getUserLatestMessages } from "../util/api";
+import {
+  getCurrentUser,
+  getUserChannels,
+  createMessage,
+  getChannelMessages,
+  getUserLatestMessages,
+} from "../util/api";
 import { BottomNavBar } from "../components/BottomNavBar";
 
 const screen = Dimensions.get("window");
@@ -39,33 +45,39 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export default ({ navigation }) => {
   let channelsElements = [];
   const [channels, setChannels] = useState(undefined);
-  const [error, setError] = useState(undefined)
+  const [error, setError] = useState(undefined);
 
   if (!channels)
     getCurrentUser().then((user) => {
-      getUserChannels(user.uid).then((channelsRes) => {
-        console.log("got channels", channelsRes);
-        channelsElements = channelsRes.map((channel) => {
-          return (
-            <Channel
-              key={channel.name}
-              style={styles.channel}
-              imageUri={channel.umageUrl}
-              title={channel.name}
-              description={channel.description}
-            />
-          );
+      getUserChannels(user.uid)
+        .then((channelsRes) => {
+          console.log("got channels", channelsRes);
+          channelsElements = channelsRes.map((channel) => {
+            return (
+              <Channel
+                key={channel.name}
+                style={styles.channel}
+                imageUri={channel.umageUrl}
+                title={channel.name}
+                description={channel.description}
+                onPress={() => {
+                  navigation.push("ChannelMenu", {
+                    title: `Меню канала ${channel.name}`,
+                    channelKey: channel.key,
+                  });
+                }}
+              />
+            );
+          });
+          setChannels(channelsElements);
+        })
+        .catch((err) => {
+          console.log("ERROR getUserChannels", err);
+          setError(err);
         });
-        setChannels(channelsElements);
-      })
-      .catch( err => {
-        console.log("ERROR getUserChannels", err)
-        setError(err)
-      })
     });
 
   return (

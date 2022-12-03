@@ -14,6 +14,7 @@ import { BoldButton, RegularButton } from "../components/Buttons";
 
 import Lock from "../assets/icons/lock"
 import PaperPlane from "../assets/icons/paperPlane"
+import fonts from "../constants/fonts";
 
 
 const styles = StyleSheet.create({
@@ -27,14 +28,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   welcomeText: {
-    // fontFamily: "SF Pro Display",
-    // fontWeight: 400,
-    fontSize: 34,
-    lineHeight: 41,
-    /* or 121% */
-    letterSpacing: 0.374,
-    /* Label Color/Light/Primary */
-    color: colors.black,
+    ...fonts.largeTitle,
     paddingHorizontal: paddings.bigHorizontalPadding,
   },
   buttonsContainer: {
@@ -72,7 +66,7 @@ export default ({ navigation }) => {
           <RegularButton
             icon={(<Lock fill={colors.defaultSystemBlueLight} />)}
             onPress={() => {
-              console.log("pressed button");
+              navigation.push("Login")
             }}
             text="Есть пароль"
           />

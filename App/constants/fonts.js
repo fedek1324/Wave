@@ -44,5 +44,13 @@ export default {
     fontWeight: "regular",
     fontSize: 34,
     lineHeight: 41,
+    // letterSpacing: 0.374,
+  },
+  regularTitle1: {
+    fontWeight: "regular",
+    fontSize: 28,
+    lineHeight: 34,
+    /* identical to box height, or 121% */
+    letterSpacing: 0.364,
   },
 };

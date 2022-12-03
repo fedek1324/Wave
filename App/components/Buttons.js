@@ -5,6 +5,7 @@ import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 
 // TODO fix button text + " " hotfix missing last letter
+// TODO change button components names
 
 const styles = StyleSheet.create({
   button: {

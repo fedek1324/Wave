@@ -7,6 +7,7 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInAnonymously,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 
 import {
@@ -60,10 +61,11 @@ database = getDatabase(app);
 
 // isChannelExists
 // createChannel
+
 // getUserById
 // createUser
-
 // signInAnonymouslyMy
+// signInWithEmail
 // getCurrentUser
 // logOut
 
@@ -154,12 +156,10 @@ export function isChannelExists(name) {
     get(
       query(ref(database, "/channels"), orderByChild("name"), equalTo(name))
     ).then((res) => {
-      console.log(`isExists ${name} result: ${res.val()}`)
-      console.log("result .val() === null", res.val()===null)
-      if (res.val()===null)
-        resolve(false)
-      else 
-        resolve(true)
+      console.log(`isExists ${name} result: ${res.val()}`);
+      console.log("result .val() === null", res.val() === null);
+      if (res.val() === null) resolve(false);
+      else resolve(true);
     });
   });
 }
@@ -208,19 +208,21 @@ export const getUserById = (userId) => {
       if (snapshot.exists()) {
         resolve(snapshot.val());
       } else {
-        reject(Error("No user available"));
+        reject(Error("No user data available"));
       }
     });
   });
 };
 
-const getChannelById = (channelId) => {
+export const getChannelById = (channelId) => {
   const dbRef = ref(database);
-  const getUserFireBasePromise = get(child(dbRef, `channels/${channelId}`)); // Promise
+  const getChannelFireBasePromise = get(child(dbRef, `channels/${channelId}`)); // Promise
   return new Promise((resolve, reject) => {
-    getUserFireBasePromise.then((snapshot) => {
+    getChannelFireBasePromise.then((snapshot) => {
       if (snapshot.exists()) {
-        resolve(snapshot.val());
+        const newChannelObject = { key: channelId, ...snapshot.val() };
+        console.log("getChannelById: got channel", newChannelObject);
+        resolve(newChannelObject);
       } else {
         reject(Error(`No channel available with key ${channelId}`));
       }
@@ -236,7 +238,9 @@ export const getUserChannels = (userId) => {
       const getChannelPromises = [
         ...channelIds.map((channelId) => getChannelById(channelId)),
       ];
-      Promise.all(getChannelPromises).then((res) => resolve(res)).catch(err => reject(err))
+      Promise.all(getChannelPromises)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
     });
   });
 };
@@ -277,6 +281,27 @@ export function signInAnonymouslyMy() {
   });
 }
 
+export function signInWithEmail(email, password) {
+  return new Promise((resolve, reject) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUserChannels(user.uid, ["НГТУ им Р. Е. Алексеева"]).then(
+          (setChannelResult) => {
+            resolve(user);
+          }
+        );
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        reject(errorMessage);
+      });
+  });
+}
+
 export function getCurrentUser() {
   return new Promise((resolve, reject) => {
     onAuthStateChanged(auth, (user) => {
@@ -293,6 +318,15 @@ export function getCurrentUser() {
         // console.log("error getting user");
         resolve(null);
       }
+    });
+  });
+}
+
+export function isUserAdmin(uid) {
+  return new Promise((resolve, reject) => {
+    getCurrentUser().then((user) => {
+      console.log("isUserAdmin got user", user);
+      resolve(!user.isAnonymous)
     });
   });
 }
@@ -319,7 +353,8 @@ export function createMessage(channelId, title, text) {
       timeStamp: Date.now(),
     };
     update(dbRef, updates).then((updateRes) => {
-      resolve(updateRes);
+      // updateRes is undefined
+      resolve("Message send");
     });
   });
 }
