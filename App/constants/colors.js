@@ -19,5 +19,6 @@ export default {
     navBarBackground: "#F4F4F4",
     systemRedLight: "#FF3B30",
     separatorLightNoTransparency: "#C6C6C8",
+    labelLightSecondary: "#3C3C43",
 
 }

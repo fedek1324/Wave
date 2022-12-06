@@ -54,6 +54,7 @@ database = getDatabase(app);
 // getChannelKeyFromName
 // getChannelKeysFromNames
 // getChannelNameFromKey
+// gellAllChannelsExcept
 
 // setChannelsToUser
 // setUserToChannels
@@ -70,6 +71,7 @@ database = getDatabase(app);
 // logOut
 
 // createMessage
+// getChannelsArrayFromKeys
 // getCurrentUserChannels
 // getChannelMessages
 // getUserLatestMessages
@@ -106,6 +108,31 @@ function getChannelKeysFromNames(channelsArray) {
     Promise.all(getChannelKeyPromises).then((channelKeys) => {
       resolve(channelKeys);
     });
+  });
+}
+
+// TODO optimize
+export function gellAllChannelsExcept(channelsToExcludeKeys) {
+  return new Promise((resolve, reject) => {
+    get(query(ref(database, `/channels`)))
+      .then((snapshot) => {
+        const channelsObj = snapshot.val();
+        const filteredChannelsObj = Object.fromEntries(
+          Object.entries(channelsObj).filter(
+            ([key, value]) => !channelsToExcludeKeys.includes(key)
+          )
+        );
+        const channelsArray = Object.entries(filteredChannelsObj).map(
+          (channelKeyValueObject) => {
+            return {key: channelKeyValueObject[0], ...channelKeyValueObject[1]}
+          }
+        )
+        const sortedChannelsArray = channelsArray.sort( (a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+        resolve(sortedChannelsArray);
+      })
+      .catch((err) => reject(err));
   });
 }
 
@@ -230,17 +257,27 @@ export const getChannelById = (channelId) => {
   });
 };
 
+// TODO rename getChannelById to getChannelByKEy
+function getChannelsArrayFromKeys(channelKeys) {
+  const dbRef = ref(database);
+  return new Promise((resolve, reject) => {
+    const getChannelPromises = [
+      ...channelKeys.map((channelId) => getChannelById(channelId)),
+    ];
+    Promise.all(getChannelPromises)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
+
 export const getUserChannels = (userId) => {
   const dbRef = ref(database);
   return new Promise((resolve, reject) => {
     getUserById(userId).then((user) => {
       const channelIds = Object.keys(user.channels);
-      const getChannelPromises = [
-        ...channelIds.map((channelId) => getChannelById(channelId)),
-      ];
-      Promise.all(getChannelPromises)
-        .then((res) => resolve(res))
-        .catch((err) => reject(err));
+      getChannelsArrayFromKeys(channelIds).then((channelsArray) => {
+        resolve(channelsArray);
+      });
     });
   });
 };
@@ -326,7 +363,7 @@ export function isUserAdmin(uid) {
   return new Promise((resolve, reject) => {
     getCurrentUser().then((user) => {
       console.log("isUserAdmin got user", user);
-      resolve(!user.isAnonymous)
+      resolve(!user.isAnonymous);
     });
   });
 }

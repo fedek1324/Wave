@@ -27,6 +27,11 @@ export default {
     lineHeight: 18,
     // letter-spacing: -0.078px;
   },
+  regularCaption1: {
+    fontWeight: "regular",
+    fontSize: 12,
+    lineHeight: 16,
+  },
   boldBody: {
     fontWeight: "bold",
     fontSize: 17,
