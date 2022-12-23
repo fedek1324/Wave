@@ -127,6 +127,7 @@ export function gellAllChannelsExcept(channelsToExcludeKeys) {
             return {key: channelKeyValueObject[0], ...channelKeyValueObject[1]}
           }
         )
+        console.log("channelsArray", channelsArray)
         const sortedChannelsArray = channelsArray.sort( (a, b) => {
           return a.name.localeCompare(b.name)
         })

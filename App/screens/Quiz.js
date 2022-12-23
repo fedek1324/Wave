@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
 // https://stackoverflow.com/questions/66310505/non-serializable-values-were-found-in-the-navigation-state-when-passing-a-functi
 // And make Selection to pass result through params
 
+// Fix creating undefined channel when select studSovet
+
 // !!! If you pass this second time channel in user will be new but channel users will remain
 YellowBox.ignoreWarnings([
   "Non-serializable values were found in the navigation state",
