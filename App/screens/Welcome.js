@@ -1,21 +1,14 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Image,
-  Text,
-} from "react-native";
+import { View, StyleSheet, StatusBar, Image, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import colors from "../constants/colors";
 import paddings from "../constants/paddings";
 import { BoldButton, RegularButton } from "../components/Buttons";
 
-import Lock from "../assets/icons/lock"
-import PaperPlane from "../assets/icons/paperPlane"
+import Lock from "../assets/icons/lock";
+import PaperPlane from "../assets/icons/paperPlane";
 import fonts from "../constants/fonts";
-
 
 const styles = StyleSheet.create({
   container: {
@@ -25,6 +18,7 @@ const styles = StyleSheet.create({
   },
   illustrationContainer: {
     alignItems: "center",
+    justifyContent: "flex-start",
     marginBottom: 40,
   },
   welcomeText: {
@@ -37,6 +31,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  illustration: {
+    width: 277*1,
+    height: 267*1, 
+    
+  },
 });
 
 export default ({ navigation }) => {
@@ -48,7 +47,11 @@ export default ({ navigation }) => {
       />
       <SafeAreaView>
         <View style={styles.illustrationContainer}>
-          <Image source={require("../assets/images/IllustrationSe.png")} />
+          <Image
+            style={styles.illustration}
+            resizeMode="contain"
+            source={require("../assets/images/IllustrationSe.png")}
+          />
         </View>
         <View>
           <Text style={styles.welcomeText}>
@@ -57,16 +60,16 @@ export default ({ navigation }) => {
         </View>
         <View style={styles.buttonsContainer}>
           <BoldButton
-            icon={(<PaperPlane fill={colors.white} />)}
+            icon={<PaperPlane fill={colors.white} />}
             onPress={() => {
-              navigation.push("Quiz")
+              navigation.push("Quiz");
             }}
             text="Начать"
           />
           <RegularButton
-            icon={(<Lock fill={colors.defaultSystemBlueLight} />)}
+            icon={<Lock fill={colors.defaultSystemBlueLight} />}
             onPress={() => {
-              navigation.push("Login")
+              navigation.push("Login");
             }}
             text="Есть пароль"
           />
