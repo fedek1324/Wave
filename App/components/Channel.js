@@ -61,7 +61,7 @@ export const Channel = ({
         <Image
           style={styles.image}
           source={{ uri: imageUri }}
-          resizeMode="contain"
+          resizeMode="cover"
         />
         <View style={styles.infoContainer}>
           <Text style={styles.title}>{title}</Text>
@@ -71,8 +71,8 @@ export const Channel = ({
       {selected ? (
         <Image
           style={styles.checkMark}
-          source={checkMark} // автоматически подбирает 1х 2х или 3х
-          resizeMode="contain"
+          source={checkMark} // automaticly chooses 1х 2х or 3х
+          resizeMode="cover"
         />
       ) : (
         <ChevronRight />

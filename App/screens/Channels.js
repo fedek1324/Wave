@@ -46,80 +46,69 @@ const styles = StyleSheet.create({
   channel: {
     marginBottom: 12,
   },
+  scrollContainer: {
+    // TODO change 150 to smth depending on botton nav bar
+    height: screen.height - 150
+  }
 });
-
-// TODO optimize
 
 export default ({ navigation }) => {
   const [userChannels, setUserChannels] = useState(undefined);
-  const [oherChannels, setOtherChannels] = useState(undefined);
+  const [otherChannels, setOtherChannels] = useState(undefined);
   const [error, setError] = useState(undefined);
 
-  if (!userChannels)
-    getCurrentUser().then((user) => {
-      getUserChannels(user.uid)
-        .then((channelsRes) => {
-          console.log("got channels", channelsRes);
-          let userChannelsElements = [];
-          userChannelsElements = channelsRes.map((channel) => {
-            return (
-              <Channel
-                key={channel.name}
-                style={styles.channel}
-                imageUri={channel.umageUrl}
-                title={channel.name}
-                description={channel.description}
-                onPress={() => {
-                  navigation.push("ChannelMenu", {
-                    title: `Меню канала ${channel.name}`,
-                    channelKey: channel.key,
-                  });
-                }}
-              />
-            );
+  function mapChannelsToElements(channels) {
+    return channels.map((channel) => (
+      <Channel
+        key={channel.name}
+        style={styles.channel}
+        imageUri={channel.umageUrl}
+        title={channel.name}
+        description={channel.description}
+        onPress={() => {
+          navigation.push("ChannelMenu", {
+            title: `Меню канала ${channel.name}`,
+            channelKey: channel.key,
           });
-          setUserChannels(userChannelsElements);
-          const userChannelKeys = channelsRes.map(channelObj => {
-            return channelObj.key
-          })
-          console.log("userChannelKeys", userChannelKeys)
-          gellAllChannelsExcept(userChannelKeys).then((otherChannelsRes) => {
-            let otherChannelsElements = [];
-            otherChannelsElements = otherChannelsRes.map((channel) => {
-              return (
-                <Channel
-                  key={channel.name}
-                  style={styles.channel}
-                  imageUri={channel.umageUrl}
-                  title={channel.name}
-                  description={channel.description}
-                  onPress={() => {
-                    navigation.push("ChannelMenu", {
-                      title: `Меню канала ${channel.name}`,
-                      channelKey: channel.key,
-                    });
-                  }}
-                />
-              );
-            });
-            console.log(otherChannelsElements);
-            setOtherChannels(otherChannelsElements)
-          });
-        })
-        .catch((err) => {
-          console.log("ERROR getUserChannels", err);
-          setError(err);
-        });
-    });
+        }}
+      />
+    ));
+  }
+
+  async function loadUserChannels() {
+    try {
+      const user = await getCurrentUser();
+      const channelsRes = await getUserChannels(user.uid);
+      console.log("got channels", channelsRes);
+  
+      const userChannelsElements = mapChannelsToElements(channelsRes);
+      setUserChannels(userChannelsElements);
+  
+      const userChannelKeys = channelsRes.map((channelObj) => channelObj.key);
+      console.log("userChannelKeys", userChannelKeys);
+  
+      const otherChannelsRes = await gellAllChannelsExcept(userChannelKeys);
+      const otherChannelsElements = mapChannelsToElements(otherChannelsRes);
+      console.log(otherChannelsElements);
+      setOtherChannels(otherChannelsElements);
+    } catch (err) {
+      console.log("ERROR getUserChannels", err);
+      setError(err);
+    }
+  }
+  
+  if (!userChannels) {
+    loadUserChannels();
+  }
 
   return (
     <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
+      <StatusBar
         barStyle="light-content"
         backgroundColor={colors.blue}
       />
       <SafeAreaView>
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.channels}>
             {error && <Text>{error.toString()}</Text>}
             {userChannels ? (
@@ -127,8 +116,8 @@ export default ({ navigation }) => {
             ) : (
               <Text>Loading</Text>
             )}
-            {oherChannels ? (
-              <ChannelGroup channels={oherChannels} groupName="Другие каналы" />
+            {otherChannels ? (
+              <ChannelGroup channels={otherChannels} groupName="Другие каналы" />
             ) : (
               <Text>Loading</Text>
             )}
@@ -138,4 +127,5 @@ export default ({ navigation }) => {
       <BottomNavBar navigation={navigation} />
     </View>
   );
+  
 };
