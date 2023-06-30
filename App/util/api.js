@@ -434,26 +434,24 @@ export function getChannelMessages(channelKey) {
   });
 }
 
-export function getUserLatestMessages() {
-  return new Promise((resolve, reject) => {
-    getCurrentUserChannelsKeys().then((channels) => {
-      const getChannelMessagesPromises = channels.map((channelKey) =>
-        getChannelMessages(channelKey)
-      );
-      Promise.all(getChannelMessagesPromises).then((channelMessagesArray) => {
-        const allMessages = channelMessagesArray.reduce(
-          (accumulator, currentValue) => accumulator.concat(currentValue),
-          []
-        );
-        const sortedMessages = allMessages.sort((a, b) => {
-          return b.timeStamp - a.timeStamp;
-        });
-        console.log("getUserLatestMessages: sortedMessages", sortedMessages);
-        resolve(sortedMessages);
-      });
-    });
-  });
+export async function getUserLatestMessages() {
+  // TODO Add algoritm to not load all messages
+  try {
+    const channels = await getCurrentUserChannelsKeys();
+    const getChannelMessagesPromises = channels.map((channelKey) =>
+      getChannelMessages(channelKey)
+    );
+    const channelMessagesArray = await Promise.all(getChannelMessagesPromises);
+    const allMessages = channelMessagesArray.flat();
+    const sortedMessages = allMessages.sort((a, b) => b.timeStamp - a.timeStamp);
+    console.log("getUserLatestMessages: sortedMessages", sortedMessages);
+    return sortedMessages;
+  } catch (error) {
+    console.error("getUserLatestMessages: error", error);
+    throw error;
+  }
 }
+
 
 export const apiInit = () => {
   return new Promise((resolve, reject) => {
