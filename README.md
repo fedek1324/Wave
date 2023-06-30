@@ -1,7 +1,7 @@
 The project was
 
 # Wave
-<p>The project was developed using Expo v45 and Npm v18.x.x.</p>
+<p>The project was developed using Expo v46 and Npm v18.x.x.</p>
 
 ## How to run
 
