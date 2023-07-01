@@ -33,7 +33,11 @@ export function getChannelKeyFromName(channelName) {
         equalTo(channelName)
       )
     )
-      .then((channel) => resolve(channel.node.children.root_.key))
+      .then(channel => {
+        console.log(`Getting channel key. Channel name ${channelName}. See channel below`);
+        console.log(channel);
+        resolve(channel._node.children_.root_.key);
+      })
       .catch((err) => reject(err));
   });
 }

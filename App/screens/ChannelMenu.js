@@ -16,7 +16,7 @@ import paddings from "../constants/paddings";
 import {
   apiInit,
   getCurrentUser,
-  getChannelById,
+  getChannelByKey,
   isUserAdmin,
   getCurrentUserChannelsKeys,
   getUserChannels,
@@ -175,7 +175,7 @@ export default ({ navigation, route }) => {
   const [channel, setChannel] = useState(undefined);
 
   useEffect(() => {
-    getChannelById(channelKey).then((channelResult) => {
+    getChannelByKey(channelKey).then((channelResult) => {
       setChannel(channelResult);
     });
   }, [channelKey]);

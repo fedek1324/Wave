@@ -7,3 +7,4 @@ use re-export in api.js
 add data validation
 convert timeStamp to date time
 dont allow messages to be very big
+if hacker registrates and authorizes with api he can see admin features (but cant use it)

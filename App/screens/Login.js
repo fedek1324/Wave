@@ -14,7 +14,7 @@ import colors from "../constants/colors";
 import fonts from "../constants/fonts";
 import paddings from "../constants/paddings";
 
-import { apiInit, getCurrentUser, signInWithEmail } from "../util/api";
+import {apiInit, getCurrentUser, getCurrentUserChannelsKeys, signInWithEmail, initUserChannelsList} from "../util/api";
 
 const screen = Dimensions.get("window");
 
@@ -67,12 +67,30 @@ export default ({ navigation }) => {
             style={styles.button}
             onPress={() => {
               signInWithEmail(email, password)
-                .then((res) => {
+                .then((user) => {
                   console.log("signed in");
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Messages" }],
-                  });
+                  getCurrentUserChannelsKeys().then(channelKeys => console.log(channelKeys))
+                      .catch(err => {
+                        if( err.name === "NoUserData") {
+                            console.log("Creating new user channels data")
+                          initUserChannelsList().then(
+                              isSucceeded => {
+                                if (isSucceeded) {
+                                  navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: "Messages" }],
+                                  });
+                                } else {
+                                  throw new Error("Tried to init empty user data but failed")
+                                }
+                              }
+                          )
+                        } else {
+                            throw err;
+                        }
+                        console.log(err)
+                      })
+
                 })
                 .catch((err) => {
                   console.log(err);
