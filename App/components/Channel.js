@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flexDirection: "column",
+    flex:1,
   },
   title: {
     ...fonts.regularCallout,

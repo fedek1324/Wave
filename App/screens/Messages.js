@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,6 +23,8 @@ import { BottomNavBar } from "../components/BottomNavBar";
 
 // TODO padding bottom to scrollView
 
+const screen = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -35,6 +38,10 @@ const styles = StyleSheet.create({
   message: {
     marginBottom: 25,
   },
+  scrollContainer: {
+    // TODO change 150 to smth depending on botton nav bar
+    height: screen.height - 150
+  }
 });
 
 export default ({ navigation }) => {
@@ -69,7 +76,7 @@ export default ({ navigation }) => {
       />
       <SafeAreaView>
         <View style={styles.messagesContainer}>
-          <ScrollView>{messages || <Text>Loading</Text>}</ScrollView>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>{messages || <Text>Loading</Text>}</ScrollView>
         </View>
       </SafeAreaView>
       <BottomNavBar navigation={navigation} />

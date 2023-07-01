@@ -76,6 +76,10 @@ export default ({ navigation, route }) => {
           onPress={() => {
             createMessage(params.channelKey, messageText, messageTitle).then((res) => {
               console.log("createMessage result:", res);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Loading" }],
+              });
             });
           }}
           text="Отправить"

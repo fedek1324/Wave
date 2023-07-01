@@ -26,7 +26,11 @@ export default ({ navigation }) => {
   const [username, setUsername] = useState("Пользователь: ");
   if (username === "Пользователь: ") {
     getCurrentUser().then((user) => {
-      setUsername(`Пользователь: ${user.uid}\n${user.email ? `Администратор: ${user.email}` : "Обычный пользователь"}`);
+      setUsername(
+        `Пользователь: ${user.uid}\n${
+          user.email ? `Администратор: ${user.email}` : "Обычный пользователь"
+        }`
+      );
     });
   }
 
@@ -41,11 +45,13 @@ export default ({ navigation }) => {
         <RowItem
           title="Logout"
           onPress={() => {
-            logOut().then((res) => console.log(res));
-            navigation.reset({
-          index: 0,
-          routes: [{ name: "Loading" }],
-        });
+            logOut().then((res) => {
+              console.log(res);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Loading" }],
+              });
+            });
           }}
           textStyle={{ color: colors.systemRedLight }}
         />
