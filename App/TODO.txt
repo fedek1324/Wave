@@ -1,0 +1,9 @@
+Channels subscribe and unsubscribe
+optimize api: use not set but append and delete
+Disable extra buttons
+cant skip quiz
+cant skip qwuiz
+use re-export in api.js
+add data validation
+convert timeStamp to date time
+dont allow messages to be very big

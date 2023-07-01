@@ -40,21 +40,20 @@ import {
   getChannelNameFromKey,
 } from "./channelsUtils";
 
-// export {
-//   getAllChannelsExcept,
-//   isChannelExists
-// }
+export {
+  getAllChannelsExcept,
+  isChannelExists
+} // re-export doesnt work
 
-// export {
-//   getChannelKeyFromName,
-//   getChannelKeysFromNames,
-//   getChannelNameFromKey,
-// }
-
+export {
+  getChannelKeyFromName,
+  getChannelKeysFromNames,
+  getChannelNameFromKey,
+}
 
 let auth;
-
 let database;
+
 
 export async function apiInit() {
   await initializeFirebase();
@@ -67,13 +66,13 @@ export async function apiInit() {
 // getChannelKeyFromName    channelsUtils
 // getChannelKeysFromNames  channelsUtils
 // getChannelNameFromKey    channelsUtils
-// getAllChannelsExcept    channels
+// getAllChannelsExcept     channels
 
 // setChannelsToUser
 // setUserToChannels
 // setUserChannels accepts channelNames
 
-// isChannelExists
+// isChannelExists          channels
 // createChannel
 
 // getUserById

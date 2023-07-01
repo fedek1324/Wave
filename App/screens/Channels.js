@@ -25,8 +25,8 @@ import {
   createMessage,
   getChannelMessages,
   getUserLatestMessages,
-  // eslint-disable-next-line import/named
-  gellAllChannelsExcept,
+  getAllChannelsExcept,
+  isChannelExists
 } from "../util/api";
 import { BottomNavBar } from "../components/BottomNavBar";
 import { ChannelGroup } from "../components/ChannelGroup";
@@ -88,7 +88,7 @@ export default ({ navigation }) => {
       const userChannelKeys = channelsRes.map((channelObj) => channelObj.key);
       console.log("userChannelKeys", userChannelKeys);
   
-      const otherChannelsRes = await gellAllChannelsExcept(userChannelKeys);
+      const otherChannelsRes = await getAllChannelsExcept(userChannelKeys);
       const otherChannelsElements = mapChannelsToElements(otherChannelsRes);
       console.log(otherChannelsElements);
       setOtherChannels(otherChannelsElements);
