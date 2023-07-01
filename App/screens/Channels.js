@@ -25,6 +25,7 @@ import {
   createMessage,
   getChannelMessages,
   getUserLatestMessages,
+  // eslint-disable-next-line import/named
   gellAllChannelsExcept,
 } from "../util/api";
 import { BottomNavBar } from "../components/BottomNavBar";

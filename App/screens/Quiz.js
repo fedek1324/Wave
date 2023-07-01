@@ -81,6 +81,26 @@ const createAnonimousUserWithChannels = (
   });
 };
 
+const Selection = ({ navigation, subject, options, setState }) => {
+  const createSelection = () => {
+    return (
+      <RowItem
+        title={subject}
+        onPress={() => {
+          navigation.push("Selection", {
+            title: subject,
+            options,
+            setState,
+          });
+        }}
+        rightIcon={<Chevron fill={colors.tertiary} />}
+      />
+    );
+  };
+
+  return createSelection();
+};
+
 export default ({ navigation }) => {
   const [institute, setInstitute] = useState(undefined);
   const institutes = [
@@ -116,22 +136,6 @@ export default ({ navigation }) => {
 
   const [error, setError] = useState(undefined);
 
-  const createSelection = (props) => {
-    return (
-      <RowItem
-        title={props.subject}
-        onPress={() => {
-          navigation.push("Selection", {
-            title: props.subject,
-            options: props.options,
-            setState: props.setState,
-          });
-        }}
-        rightIcon={<Chevron fill={colors.tertiary} />}
-      />
-    );
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar // не элемент а просто найстройка
@@ -140,38 +144,44 @@ export default ({ navigation }) => {
       />
       <SafeAreaView>
         <View style={styles.content}>
-          {createSelection({
-            subject: "Институт",
-            options: institutes,
-            setState: setInstitute,
-          })}
-          {createSelection({
-            subject: "Курс",
-            options: courses,
-            setState: setCourse,
-          })}
+          <Selection
+            navigation={navigation}
+            subject="Институт"
+            options={institutes}
+            setState={setInstitute}
+          />
+          <Selection
+            navigation={navigation}
+            subject="Курс"
+            options={courses}
+            setState={setCourse}
+          />
           <MySwitch
             text="Живу в общежитии"
             state={liveInDormitory}
             changeState={setLiveInDormitory}
           />
-          {liveInDormitory &&
-            createSelection({
-              subject: "Номер общежития",
-              options: dormitoryNumbers,
-              setState: setDormitoryNumber,
-            })}
+          {liveInDormitory && (
+            <Selection
+              navigation={navigation}
+              subject="Номер общежития"
+              options={dormitoryNumbers}
+              setState={setDormitoryNumber}
+            />
+          )}
           <MySwitch
             text="Интересует студенческая жизнь"
             state={interestedInStudentActivity}
             changeState={setInterestedInStudentActivity}
           />
-          {interestedInStudentActivity &&
-            createSelection({
-              subject: "Организация (необязательно)",
-              options: studentOrganizations,
-              setState: setstudentOrganization,
-            })}
+          {interestedInStudentActivity && (
+            <Selection
+              navigation={navigation}
+              subject="Организация (необязательно)"
+              options={studentOrganizations}
+              setState={setstudentOrganization}
+            />
+          )}
           {error && <Text>{error}</Text>}
 
           <View style={styles.buttonContainer}>

@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: colors.systemGray06Light,
     borderRadius: 13,
+    minWidth: 240,
   },
   content: {
     flexDirection: "row",
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flexDirection: "column",
-    flex:1,
+    flex: 1,
   },
   title: {
     ...fonts.regularCallout,

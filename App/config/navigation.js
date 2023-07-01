@@ -40,9 +40,9 @@ const MainStackScreen = ({navigation}) => (
       options={{
         headerShown: true,
         title: "Анкета",
-        headerRight: () => (
-          <HeaderButton text="Пропустить" onPress={() => navigation.push("RegistrationFinish")} />
-        ),
+        // headerRight: () => (
+        //   <HeaderButton text="Пропустить" onPress={() => navigation.push("RegistrationFinish")} />
+        // ),
       }}
     />
     <MainStack.Screen

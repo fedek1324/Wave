@@ -23,42 +23,55 @@ import {
   equalTo,
 } from "firebase/database";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAlLJAnOy-sSe9mknnf4KYdb9ToBOje2ps",
-  authDomain: "wave-801a3.firebaseapp.com",
-  projectId: "wave-801a3",
-  storageBucket: "wave-801a3.appspot.com",
-  messagingSenderId: "149847609223",
-  appId: "1:149847609223:web:e7f6fa716851fb79590d22",
-  databaseURL: "https://wave-801a3-default-rtdb.firebaseio.com",
-};
+import {
+  getAuthInstance,
+  getDatabaseInstance,
+  initializeFirebase,
+} from "./firebase";
 
-let app;
+import {
+  getAllChannelsExcept,
+  isChannelExists
+} from "./channels"
+
+import {
+  getChannelKeyFromName,
+  getChannelKeysFromNames,
+  getChannelNameFromKey,
+} from "./channelsUtils";
+
+// export {
+//   getAllChannelsExcept,
+//   isChannelExists
+// }
+
+// export {
+//   getChannelKeyFromName,
+//   getChannelKeysFromNames,
+//   getChannelNameFromKey,
+// }
+
 
 let auth;
 
 let database;
 
-// TODO We now init in file but we can init on app launch maybe
-// Initialize Firebase
-app = initializeApp(firebaseConfig); // if errors reject calls automaticly
-
-// Initialize Firebase Authentication and get a reference to the service
-auth = getAuth(app);
-
-database = getDatabase(app);
+export async function apiInit() {
+  await initializeFirebase();
+  auth = getAuthInstance();
+  database = getDatabaseInstance();
+}
 
 // function list
 
-// getChannelKeyFromName
-// getChannelKeysFromNames
-// getChannelNameFromKey
-// gellAllChannelsExcept
+// getChannelKeyFromName    channelsUtils
+// getChannelKeysFromNames  channelsUtils
+// getChannelNameFromKey    channelsUtils
+// getAllChannelsExcept    channels
 
 // setChannelsToUser
 // setUserToChannels
-// setUserChannels
+// setUserChannels accepts channelNames
 
 // isChannelExists
 // createChannel
@@ -72,70 +85,10 @@ database = getDatabase(app);
 
 // createMessage
 // getChannelsArrayFromKeys
-// getCurrentUserChannels
+// getCurrentUserChannelsKeys
 // getChannelMessages
 // getUserLatestMessages
-// apiInit
-
-function getChannelNameFromKey(channelKey) {
-  return new Promise((resolve, reject) => {
-    get(query(ref(database, `/channels/${channelKey}/name`)))
-      .then((snapshot) => resolve(snapshot.val()))
-      .catch((err) => reject(err));
-  });
-}
-
-function getChannelKeyFromName(channelName) {
-  return new Promise((resolve, reject) => {
-    get(
-      query(
-        ref(database, "/channels"),
-        orderByChild("name"),
-        equalTo(channelName)
-      )
-    )
-      .then((channel) => resolve(channel._node.children_.root_.key))
-      .catch((err) => reject(err));
-  });
-}
-
-function getChannelKeysFromNames(channelsArray) {
-  return new Promise((resolve, reject) => {
-    const getChannelKeyPromises = [];
-    channelsArray.forEach((channelName) => {
-      getChannelKeyPromises.push(getChannelKeyFromName(channelName));
-    });
-    Promise.all(getChannelKeyPromises).then((channelKeys) => {
-      resolve(channelKeys);
-    });
-  });
-}
-
-// TODO optimize
-export function gellAllChannelsExcept(channelsToExcludeKeys) {
-  return new Promise((resolve, reject) => {
-    get(query(ref(database, `/channels`)))
-      .then((snapshot) => {
-        const channelsObj = snapshot.val();
-        const filteredChannelsObj = Object.fromEntries(
-          Object.entries(channelsObj).filter(
-            ([key, value]) => !channelsToExcludeKeys.includes(key)
-          )
-        );
-        const channelsArray = Object.entries(filteredChannelsObj).map(
-          (channelKeyValueObject) => {
-            return {key: channelKeyValueObject[0], ...channelKeyValueObject[1]}
-          }
-        )
-        console.log("channelsArray", channelsArray)
-        const sortedChannelsArray = channelsArray.sort( (a, b) => {
-          return a.name.localeCompare(b.name)
-        })
-        resolve(sortedChannelsArray);
-      })
-      .catch((err) => reject(err));
-  });
-}
+// initializeFirebase                      firebase
 
 function setChannelsToUser(userId, channelKeys) {
   return new Promise((resolve, reject) => {
@@ -165,9 +118,9 @@ function setUserToChannels(userId, channelKeys) {
   });
 }
 
-export function setUserChannels(userId, channelsArray) {
+export function setUserChannels(userId, channelsNames) {
   return new Promise((resolve, reject) => {
-    getChannelKeysFromNames(channelsArray).then((channelKeys) => {
+    getChannelKeysFromNames(channelsNames).then((channelKeys) => {
       const setChannelsToUserPromise = setChannelsToUser(userId, channelKeys);
       const setUserToChannelsPromise = setUserToChannels(userId, channelKeys);
       Promise.all([setChannelsToUserPromise, setUserToChannelsPromise]).then(
@@ -175,19 +128,6 @@ export function setUserChannels(userId, channelsArray) {
           resolve("channels set to user and user set to channels");
         }
       );
-    });
-  });
-}
-
-export function isChannelExists(name) {
-  return new Promise((resolve, reject) => {
-    get(
-      query(ref(database, "/channels"), orderByChild("name"), equalTo(name))
-    ).then((res) => {
-      console.log(`isExists ${name} result: ${res.val()}`);
-      console.log("result .val() === null", res.val() === null);
-      if (res.val() === null) resolve(false);
-      else resolve(true);
     });
   });
 }
@@ -378,7 +318,7 @@ export function logOut() {
   });
 }
 
-export function createMessage(channelId, title, text) {
+export function createMessage(channelId, text, title) {
   return new Promise((resolve, reject) => {
     const dbRef = ref(database);
     const newMessageKey = push(
@@ -409,29 +349,32 @@ export function getCurrentUserChannelsKeys() {
   });
 }
 
-export function getChannelMessages(channelKey) {
-  return new Promise((resolve, reject) => {
+export async function getChannelMessages(channelKey) {
+  try {
     const dbRef = ref(database);
-    get(child(dbRef, `messagesByChannels/${channelKey}`)).then((snapshot) => {
-      const messages = snapshot.val();
-      if (!snapshot.exists()) {
-        console.log("getChannelMessages: no messages");
-        resolve([]);
-        return;
-      }
-      console.log("getChannelMessages messages old format", messages);
-      let newMessages;
-      getChannelNameFromKey(channelKey).then((channelName) => {
-        newMessages = Object.values(messages).map((message) => {
-          return {
-            channelName,
-            ...message,
-          };
-        });
-        resolve(newMessages);
-      });
-    });
-  });
+    const snapshot = await get(
+      child(dbRef, `messagesByChannels/${channelKey}`)
+    );
+    const messages = snapshot.val();
+
+    if (!snapshot.exists()) {
+      console.log("getChannelMessages: no messages");
+      return [];
+    }
+
+    console.log("getChannelMessages messages old format", messages);
+
+    const channelName = await getChannelNameFromKey(channelKey);
+    const newMessages = Object.values(messages).map((message) => ({
+      channelName,
+      ...message,
+    }));
+
+    return newMessages;
+  } catch (error) {
+    console.error("getChannelMessages error", error);
+    throw error;
+  }
 }
 
 export async function getUserLatestMessages() {
@@ -443,7 +386,9 @@ export async function getUserLatestMessages() {
     );
     const channelMessagesArray = await Promise.all(getChannelMessagesPromises);
     const allMessages = channelMessagesArray.flat();
-    const sortedMessages = allMessages.sort((a, b) => b.timeStamp - a.timeStamp);
+    const sortedMessages = allMessages.sort(
+      (a, b) => b.timeStamp - a.timeStamp
+    );
     console.log("getUserLatestMessages: sortedMessages", sortedMessages);
     return sortedMessages;
   } catch (error) {
@@ -451,18 +396,3 @@ export async function getUserLatestMessages() {
     throw error;
   }
 }
-
-
-export const apiInit = () => {
-  return new Promise((resolve, reject) => {
-    // Initialize Firebase
-    app = initializeApp(firebaseConfig); // if errors reject calls automaticly
-
-    // Initialize Firebase Authentication and get a reference to the service
-    auth = getAuth(app);
-
-    database = getDatabase(app);
-
-    resolve("api init ok");
-  });
-};

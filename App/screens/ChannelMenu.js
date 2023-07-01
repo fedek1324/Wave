@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -18,6 +18,9 @@ import {
   getCurrentUser,
   getChannelById,
   isUserAdmin,
+  getCurrentUserChannelsKeys,
+  getUserChannels,
+  setUserChannels
 } from "../util/api";
 
 const screen = Dimensions.get("window");
@@ -54,85 +57,152 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ({ navigation, route }) => {
-  const params = route.params || {};
-  console.log("ChannelMenu params", params);
+const SendMessageButton = ({ navigation, channel }) => (
+  <RegularButton
+    onPress={() => {
+      console.log("Creating button send message. Got channel key:", channel.key);
+      navigation.push("SendMessage", {
+        title: `Отправить в ${channel.name}`,
+        channelKey : channel.key,
+      });
+    }}
+    text="Отправить сообщение"
+    style={styles.channelButton}
+  />
+);
 
-  const [channel, setChannel] = useState(undefined);
+const LeftChannelButton = ({ navigation, channel }) => (
+  <RegularButton
+    onPress={() => {}}
+    text="Покинуть канал"
+    style={styles.channelButton}
+  />
+);
+
+const EnterChannelButton = ({ navigation, channel }) => (
+  <RegularButton
+    onPress={async () => {
+      getCurrentUserChannelsKeys()
+    }}
+    text="Вступить в канал"
+    style={styles.channelButton}
+  />
+);
+
+const DeleteChannelButton = ({ navigation, channel }) => (
+  <RegularButton
+    onPress={() => {}}
+    text="Удалить канал"
+    style={styles.channelButton}
+  />
+);
+
+const SoundNotificationsButton = ({ navigation, channel }) => (
+  <RegularButton
+    onPress={() => {}}
+    text="Звуковые уведомления"
+    style={styles.channelButton}
+  />
+);
+
+const Buttons = ({ navigation, channel }) => {
   const [isUserAdminVar, setIsUserAdminVar] = useState(undefined);
-  if (!channel) {
-    getChannelById(params.channelKey).then((channelResult) => {
-      setChannel(channelResult);
-    });
-  }
-  if (isUserAdminVar === undefined) {
+  const [isUserInChanel, setIsUserInChanel] = useState(undefined);
+
+  useEffect(() => {
     isUserAdmin().then((res) => {
       setIsUserAdminVar(res);
     });
-  }
+    getCurrentUserChannelsKeys().then((userChannels) => {
+      setIsUserInChanel(userChannels.includes(channel.key));
+    });
+  }, [channel]);
 
   const adminButtons = [
-    <RegularButton
+    <SendMessageButton
       key={0}
-      onPress={() => {
-        console.log(
-          "Creating button send message. Got channel key:",
-          params.channelKey
-        );
-        navigation.push("SendMessage", {
-          title: `Отправить в ${channel.name}`,
-          channelKey: params.channelKey,
-        });
-      }}
-      text="Отправить сообщение"
-      style={styles.channelButton}
+      channel={channel}
+      channelKey={channel.key}
+      navigation={navigation}
     />,
-    <RegularButton
+    <DeleteChannelButton
       key={1}
-      onPress={() => {}}
-      text="Удалить канал"
-      style={styles.channelButton}
+      channel={channel}
+      channelKey={channel.key}
+      navigation={navigation}
     />,
   ];
 
   return (
+    <View style={styles.buttons}>
+      {isUserInChanel === undefined ? (
+        <Text>Loading</Text>
+      ) : (
+        <>
+          {isUserAdminVar &&
+            adminButtons}
+          {isUserInChanel ? (
+            <LeftChannelButton
+              key={2}
+              channel={channel}
+              channelKey={channel.key}
+              navigation={navigation}
+            />
+          ) : (
+            <EnterChannelButton
+              key={2}
+              channel={channel}
+              channelKey={channel.key}
+              navigation={navigation}
+            />
+          )}
+          <SoundNotificationsButton
+            key={3}
+            channel={channel}
+            channelKey={channel.key}
+            navigation={navigation}
+          />
+        </>
+      )}
+    </View>
+  );
+};
+
+export default ({ navigation, route }) => {
+  const { channelKey } = route.params || {};
+  console.log("ChannelMenu params", route.params);
+
+  const [channel, setChannel] = useState(undefined);
+
+  useEffect(() => {
+    getChannelById(channelKey).then((channelResult) => {
+      setChannel(channelResult);
+    });
+  }, [channelKey]);
+
+  return (
     <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
+      <StatusBar // not element just setting
         barStyle="light-content"
         backgroundColor={colors.blue}
       />
       <SafeAreaView>
         {channel ? (
-          <View style={styles.content}>
-            <View style={styles.channelHat}>
-              <Image
-                source={{ uri: channel.imageUrl }}
-                style={styles.channelImage}
-              />
-              <Text style={styles.channelName}>{channel.name}</Text>
-              <Text style={styles.channelDescription}>
-                {channel.description}
-              </Text>
+          <>
+            <View style={styles.content}>
+              <View style={styles.channelHat}>
+                <Image
+                  source={{ uri: channel.imageUrl }}
+                  style={styles.channelImage}
+                />
+                <Text style={styles.channelName}>{channel.name}</Text>
+                <Text style={styles.channelDescription}>
+                  {channel.description}
+                </Text>
+              </View>
             </View>
-            <View style={styles.buttons}>
-              {isUserAdminVar &&
-                adminButtons.map((button) => {
-                  return button;
-                })}
-              <RegularButton
-                key={2}
-                onPress={() => {}}
-                text="Звуковые уведомления"
-                style={styles.channelButton}
-              />
-              <RegularButton
-                key={3}
-                onPress={() => {}}
-                text="Покинуть канал"
-                style={styles.channelButton}
-              />
-            </View>
-          </View>
+            <Buttons navigation={navigation} channel={channel} />
+          </>
         ) : (
           <Text>Loading</Text>
         )}

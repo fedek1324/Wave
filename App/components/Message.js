@@ -16,13 +16,16 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.systemGray06Light,
     borderRadius: 16,
+    minWidth: 240,
   },
   metaInfo: {
     flexDirection: "row",
     marginBottom: 10,
+    flex: 1,
   },
   metaInfoText: {
     flexDirection: "column",
+    flex: 1,
   },
   messageInfo: {
     flexDirection: "column",
@@ -36,11 +39,22 @@ const styles = StyleSheet.create({
   },
   title: {
     ...fonts.regularSubheadline,
+    marginBottom: 5,
   },
   text: {
     ...fonts.regularFootnote,
   },
 });
+
+function formatDate(date) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear().toString();
+
+  return `${hours}:${minutes} ${month}.${day}.${year}`;
+}
 
 export const Message = ({
   imageUri = "https://i.ibb.co/1LgrM8Y/gradient.jpg",
@@ -53,9 +67,9 @@ export const Message = ({
   <View style={[styles.messageContainer, style]}>
     <View style={styles.metaInfo}>
       <Image style={styles.image} source={{ uri: imageUri }} />
-      <View styles={styles.metaInfoText}>
+      <View style={styles.metaInfoText}>
         <Text style={styles.channelName}>{channelName}</Text>
-        <Text style={styles.dateTime}>{dateTime}</Text>
+        <Text style={styles.dateTime}>{formatDate(new Date(dateTime))}</Text>
       </View>
     </View>
     <View style={styles.messageInfo}>
