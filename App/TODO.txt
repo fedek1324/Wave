@@ -3,8 +3,8 @@ optimize api: use not set but append and delete
 Disable extra buttons
 cant skip quiz
 cant skip qwuiz
-use re-export in api.js
-add data validation
-convert timeStamp to date time
-dont allow messages to be very big
+fix re-export in api.js
+add data validation in Firebase
+dont allow messages to be very big in interface
 if hacker registrates and authorizes with api he can see admin features (but cant use it)
+fix that channel utils imports channel

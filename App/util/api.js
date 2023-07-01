@@ -40,6 +40,7 @@ import {
   getChannelKeyFromName,
   getChannelKeysFromNames,
   getChannelNameFromKey,
+  getChannelsArrayFromKeys
 } from "./firebaseApiFunctions/channelsUtils";
 
 export {
@@ -53,6 +54,7 @@ export {
   getChannelKeyFromName,
   getChannelKeysFromNames,
   getChannelNameFromKey,
+  getChannelsArrayFromKeys
 } // re-export doesnt work
 
 let auth;
@@ -66,6 +68,7 @@ let database;
 // getChannelKeyFromName    ./channelsUtils
 // getChannelKeysFromNames  ./channelsUtils
 // getChannelNameFromKey    ./channelsUtils
+// getChannelsArrayFromKeys ./channelsUtils
 // getAllChannelsExcept     ./channels
 // isChannelExists          ./channels
 // createChannel            ./channels
@@ -74,6 +77,7 @@ let database;
 // setChannelsToUser        ./userChannels.js
 // setUserToChannels        ./userChannels.js
 // setUserChannels          ./userChannels.js     accepts channelNames
+// initUserChannelsList
 
 // getUserById
 // createUser
@@ -83,9 +87,8 @@ let database;
 // logOut
 
 // createMessage
-// getChannelsArrayFromKeys
-// getCurrentUserChannelsKeys
 // getChannelMessages
+// getCurrentUserChannelsKeys
 // getUserLatestMessages
 
 
@@ -96,15 +99,6 @@ export async function apiInit() {
 }
 
 export const getUserById = (userId) => {
-  // Обернули промис в промис
-  // Изначально я не понимал почему
-  // get.then( (snapshot)=> return snapshot.val())
-  // Ничего не возвращет в функцию getUser в которой он прописан
-  // Это потому что он возвращал в контекст then()
-  // Нельзя вернуть зн-е из промиса из функции в которой он вызван
-  // Сейчас он возвращает результат в resolve который стоит выше в контексте
-  // Мы вызываем промис который вызывает другой пропис и получает его результат в resolve
-  // Всё это чтобы пользователю не пришлось вызывать get(..) и потом делать result.val()
   const dbRef = ref(database);
   const getUserFireBasePromise = get(child(dbRef, `users/${userId}`)); // Promise
   return new Promise((resolve, reject) => {
@@ -120,18 +114,6 @@ export const getUserById = (userId) => {
   });
 };
 
-function getChannelsArrayFromKeys(channelKeys) {
-  const dbRef = ref(database);
-  return new Promise((resolve, reject) => {
-    const getChannelPromises = [
-      ...channelKeys.map((channelId) => getChannelByKey(channelId)),
-    ];
-    Promise.all(getChannelPromises)
-      .then((res) => resolve(res))
-      .catch((err) => reject(err));
-  });
-}
-
 export const getUserChannels = (userId) => {
   const dbRef = ref(database);
   return new Promise((resolve, reject) => {
@@ -141,26 +123,6 @@ export const getUserChannels = (userId) => {
         resolve(channelsArray);
       });
     });
-  });
-};
-
-const createUser = (email, password) => {
-  return new Promise((resolve, reject) => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log("user", user);
-        resolve(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("errorCode", errorCode);
-        console.log("errorMessage", errorMessage);
-        // ..
-        reject(errorMessage);
-      });
   });
 };
 
@@ -186,12 +148,6 @@ export function signInWithEmail(email, password) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // setUserChannels(user.uid, ["НГТУ им Р. Е. Алексеева"]).then(
-        //   (setChannelResult) => {
-        //     resolve(user);
-        //   }
-        // );
-        // ...
         resolve(user);
       })
       .catch((error) => {
@@ -258,11 +214,25 @@ export function logOut() {
   });
 }
 
+export function getCurrentUserChannelsKeys() {
+  return new Promise((resolve, reject) => {
+    getCurrentUser().then((userAccount) => {
+      console.log("got userAccount", userAccount.uid);
+      getUserById(userAccount.uid)
+        .then((userData) => {
+          const userChannels = Object.keys(userData.channels);
+          resolve(userChannels);
+        })
+        .catch(err => reject (err));
+    });
+  });
+}
+
 export function createMessage(channelId, text, title) {
   return new Promise((resolve, reject) => {
     const dbRef = ref(database);
     const newMessageKey = push(
-      child(dbRef, `messagesByChannels/${channelId}`)
+        child(dbRef, `messagesByChannels/${channelId}`)
     ).key;
     const updates = {};
     updates[`/messagesByChannels/${channelId}/${newMessageKey}`] = {
@@ -277,19 +247,6 @@ export function createMessage(channelId, text, title) {
   });
 }
 
-export function getCurrentUserChannelsKeys() {
-  return new Promise((resolve, reject) => {
-    getCurrentUser().then((userAccount) => {
-      console.log("got userAccount", userAccount.uid);
-      getUserById(userAccount.uid)
-        .then((userData) => {
-          const userChannels = Object.keys(userData.channels);
-          resolve(userChannels);
-        })
-        .catch(err => reject (err));
-    });
-  });
-}
 
 export async function getChannelMessages(channelKey) {
   try {

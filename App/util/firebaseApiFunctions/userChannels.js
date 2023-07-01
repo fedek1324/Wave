@@ -57,3 +57,4 @@ export function setUserChannels(userId, channelsNames) {
     });
   });
 }
+

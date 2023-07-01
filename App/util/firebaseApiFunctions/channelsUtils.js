@@ -11,6 +11,7 @@ import {
   equalTo,
 } from "firebase/database";
 import { getDatabaseInstance } from "./firebase";
+import {getChannelByKey} from "./channels";
 
 export function getChannelNameFromKey(channelKey) {
   const database = getDatabaseInstance();
@@ -51,5 +52,19 @@ export function getChannelKeysFromNames(channelsArray) {
     Promise.all(getChannelKeyPromises).then((channelKeys) => {
       resolve(channelKeys);
     });
+  });
+}
+
+
+export function getChannelsArrayFromKeys(channelKeys) {
+  const database = getDatabaseInstance();
+  const dbRef = ref(database);
+  return new Promise((resolve, reject) => {
+    const getChannelPromises = [
+      ...channelKeys.map((channelId) => getChannelByKey(channelId)),
+    ];
+    Promise.all(getChannelPromises)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
   });
 }
