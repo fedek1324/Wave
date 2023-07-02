@@ -1,6 +1,8 @@
-The project was
 
 # Wave
+<p>Wave is a social media app for students. It is a message board.</p>
+<p>User can see messages from different channels related to University. 
+While administrators can send these messages.</p>
 <p>The project was developed using Expo v46 and Npm v18.x.x.</p>
 
 ## How to use
