@@ -73,7 +73,19 @@ const SendMessageButton = ({ navigation, channel }) => (
 
 const LeftChannelButton = ({ navigation, channel }) => (
   <RegularButton
-    onPress={() => {}}
+    onPress={async () => {
+        let channelKeys = await getCurrentUserChannelsKeys();
+        console.log(channel.key);
+        channelKeys = channelKeys.filter(channelKey => channelKey !== channel.key);
+        const currentUser = await getCurrentUser();
+        const setOperationRes = await setUserChannels({userId: currentUser.id, channelKeys});
+        console.log(`Set channels = ${setOperationRes}`);
+
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "Channels" }],
+        });
+    }}
     text="Покинуть канал"
     style={styles.channelButton}
   />
@@ -82,7 +94,15 @@ const LeftChannelButton = ({ navigation, channel }) => (
 const EnterChannelButton = ({ navigation, channel }) => (
   <RegularButton
     onPress={async () => {
-      getCurrentUserChannelsKeys()
+       const channelKeys = await getCurrentUserChannelsKeys();
+       channelKeys.push(channel.key);
+       const currentUser = await getCurrentUser();
+       const setOperationRes = await setUserChannels({userId: currentUser.id, channelKeys});
+       console.log(`Set channels = ${setOperationRes}`);
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "Channels" }],
+        });
     }}
     text="Вступить в канал"
     style={styles.channelButton}
@@ -91,7 +111,7 @@ const EnterChannelButton = ({ navigation, channel }) => (
 
 const DeleteChannelButton = ({ navigation, channel }) => (
   <RegularButton
-    onPress={() => {}}
+    onPress={async () => { }}
     text="Удалить канал"
     style={styles.channelButton}
   />
@@ -122,15 +142,13 @@ const Buttons = ({ navigation, channel }) => {
     <SendMessageButton
       key={0}
       channel={channel}
-      channelKey={channel.key}
       navigation={navigation}
     />,
-    <DeleteChannelButton
-      key={1}
-      channel={channel}
-      channelKey={channel.key}
-      navigation={navigation}
-    />,
+    // <DeleteChannelButton
+    //   key={1}
+    //   channel={channel}
+    //   navigation={navigation}
+    // />,
   ];
 
   return (
@@ -152,16 +170,14 @@ const Buttons = ({ navigation, channel }) => {
             <EnterChannelButton
               key={2}
               channel={channel}
-              channelKey={channel.key}
               navigation={navigation}
             />
           )}
-          <SoundNotificationsButton
-            key={3}
-            channel={channel}
-            channelKey={channel.key}
-            navigation={navigation}
-          />
+          {/* <SoundNotificationsButton */}
+          {/*   key={3} */}
+          {/*   channel={channel} */}
+          {/*   navigation={navigation} */}
+          {/* /> */}
         </>
       )}
     </View>

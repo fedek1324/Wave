@@ -69,7 +69,7 @@ const createAnonimousUserWithChannels = (
       getCurrentUser()
         .then((user) => {
           // Change this to add channels not to set
-          setUserChannels(user.uid, channels)
+          setUserChannels({userId : user.uid, channelsNames : channels})
             .then((res2) => {
               console.log("setUserChannels", res2);
               resolve(res2);

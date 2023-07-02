@@ -65,37 +65,36 @@ export default ({ navigation }) => {
           />
           <BoldButton
             style={styles.button}
-            onPress={() => {
-              signInWithEmail(email, password)
-                .then((user) => {
-                  console.log("signed in");
-                  getCurrentUserChannelsKeys().then(channelKeys => console.log(channelKeys))
-                      .catch(err => {
-                        if( err.name === "NoUserData") {
-                            console.log("Creating new user channels data")
-                          initUserChannelsList().then(
-                              isSucceeded => {
-                                if (isSucceeded) {
-                                  navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: "Messages" }],
-                                  });
-                                } else {
-                                  throw new Error("Tried to init empty user data but failed")
-                                }
-                              }
-                          )
-                        } else {
-                            throw err;
+            onPress={async () => {
+                try {
+                    const user = await signInWithEmail(email, password);
+                    console.log("signed in");
+                    const channelKeys = await getCurrentUserChannelsKeys();
+                    console.log(channelKeys);
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Messages" }],
+                    });
+                } catch (err) {
+                    console.log(err);
+                    if (err.name === "NoUserData") {
+                        console.log("Creating new user channels data");
+                        try {
+                            const isSucceeded = await initUserChannelsList();
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: "Messages" }],
+                            });
+                            if (!isSucceeded) {
+                                throw new Error("Tried to init empty user data but failed");
+                            }
+                        } catch (err2) {
+                            setError(err2)
                         }
-                        console.log(err)
-                      })
-
-                })
-                .catch((err) => {
-                  console.log(err);
-                  setError(err);
-                });
+                    } else {
+                        setError(err)
+                    }
+                }
             }}
             text="Войти"
           />

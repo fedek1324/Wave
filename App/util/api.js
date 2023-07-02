@@ -1,22 +1,10 @@
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInAnonymously,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-
-import {
-  getDatabase,
   child,
   ref,
   set,
   get,
   push,
   update,
-  query,
-  orderByChild,
-  equalTo,
 } from "firebase/database";
 
 import {
@@ -43,6 +31,14 @@ import {
   getChannelsArrayFromKeys
 } from "./firebaseApiFunctions/channelsUtils";
 
+import {
+  logOut,
+  getCurrentUser,
+  isUserAdmin,
+  signInAnonymouslyMy,
+  signInWithEmail
+} from "./firebaseApiFunctions/auth"
+
 export {
   getAllChannelsExcept,
   isChannelExists,
@@ -54,11 +50,15 @@ export {
   getChannelKeyFromName,
   getChannelKeysFromNames,
   getChannelNameFromKey,
-  getChannelsArrayFromKeys
+  getChannelsArrayFromKeys,
+
+  logOut,
+  getCurrentUser,
+  isUserAdmin,
+  signInAnonymouslyMy,
+  signInWithEmail
 } // re-export doesnt work
 
-let auth;
-let database;
 
 // function list
 
@@ -74,23 +74,26 @@ let database;
 // createChannel            ./channels
 // getChannelById           ./channels
 
-// setChannelsToUser        ./userChannels.js
-// setUserToChannels        ./userChannels.js
-// setUserChannels          ./userChannels.js     accepts channelNames
-// initUserChannelsList
+// setChannelsToUser        ./userChannels.js     not in export
+// setUserToChannels        ./userChannels.js     not in export
+// setUserChannels          ./userChannels.js     accepts channelNames or channelKeys
 
-// getUserById
-// createUser
-// signInAnonymouslyMy
-// signInWithEmail
-// getCurrentUser
-// logOut
+// signInAnonymouslyMy      ./auth.js
+// signInWithEmail          ./auth.js
+// getCurrentUser           ./auth.js
+// logOut                   ./auth.js
+// isUserAdmin              ./auth.js
 
-// createMessage
-// getChannelMessages
-// getCurrentUserChannelsKeys
-// getUserLatestMessages
+// createMessage                here
+// getChannelMessages           here
+// getUserLatestMessages        here
+// getUserById                  here
+// initUserChannelsList         here
+// getCurrentUserChannelsKeys   here
 
+
+let auth;
+let database;
 
 export async function apiInit() {
   await initializeFirebase();
@@ -126,63 +129,12 @@ export const getUserChannels = (userId) => {
   });
 };
 
-// may be registration or login
-export function signInAnonymouslyMy() {
-  return new Promise((resolve, reject) => {
-    signInAnonymously(auth)
-      .then(() => {
-        resolve("sign in anonymously ok");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        reject(error);
-      });
-  });
-}
-
-
-export function signInWithEmail(email, password) {
-  return new Promise((resolve, reject) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        resolve(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        reject(errorMessage);
-      });
-  });
-}
-
-export function getCurrentUser() {
-  return new Promise((resolve, reject) => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        resolve(user);
-        // console.log(user);
-        // ...
-      } else {
-        // User is signed out
-        // ...
-        // console.log("error getting user");
-        resolve(null);
-      }
-    });
-  });
-}
 
 export async function initUserChannelsList() {
   return new Promise((resolve, reject) => {
     getCurrentUser()
         .then(user => {
-          setUserChannels(user.uid, ["НГТУ им Р. Е. Алексеева"]).then(
+          setUserChannels({userId: user.uid, channelsNames : ["НГТУ им Р. Е. Алексеева"]}).then(
             (setChannelResult)=> {
               resolve(true);
             }
@@ -196,23 +148,6 @@ export async function initUserChannelsList() {
   });
 }
 
-export function isUserAdmin(uid) {
-  return new Promise((resolve, reject) => {
-    getCurrentUser().then((user) => {
-      console.log("isUserAdmin got user", user);
-      resolve(!user.isAnonymous);
-    });
-  });
-}
-
-export function logOut() {
-  return new Promise((resolve, reject) => {
-    auth
-      .signOut()
-      .then((res) => resolve(res))
-      .catch((err) => reject(err));
-  });
-}
 
 export function getCurrentUserChannelsKeys() {
   return new Promise((resolve, reject) => {

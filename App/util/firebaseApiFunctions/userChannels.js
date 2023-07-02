@@ -43,18 +43,19 @@ function setUserToChannels(userId, channelKeys) {
   });
 }
 
-export function setUserChannels(userId, channelsNames) {
+export async function setUserChannels({userId, channelsNames, channelKeys}) {
   const database = getDatabaseInstance();
-  return new Promise((resolve, reject) => {
-    getChannelKeysFromNames(channelsNames).then((channelKeys) => {
-      const setChannelsToUserPromise = setChannelsToUser(userId, channelKeys);
-      const setUserToChannelsPromise = setUserToChannels(userId, channelKeys);
-      Promise.all([setChannelsToUserPromise, setUserToChannelsPromise]).then(
-        (res) => {
-          resolve("channels set to user and user set to channels");
-        }
-      );
-    });
-  });
+  let channelKeysComputed;
+  if (!channelKeys) {
+    channelKeysComputed = await getChannelKeysFromNames(channelsNames);
+  } else {
+    channelKeysComputed = channelKeys;
+  }
+  console.log(channelKeysComputed);
+  const setChannelsToUserPromise = setChannelsToUser(userId, channelKeysComputed);
+  const setUserToChannelsPromise = setUserToChannels(userId, channelKeysComputed);
+  const setOperationResult = await Promise.all([setChannelsToUserPromise, setUserToChannelsPromise]);
+  console.log(setOperationResult);
+  return true;
 }
 
