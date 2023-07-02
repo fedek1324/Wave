@@ -9,7 +9,7 @@
     "web": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start --web",
     "lint": "eslint .",
     "start": "SET NODE_OPTIONS=--openssl-legacy-provider && expo start",
-    "build-web": "SET NODE_OPTIONS=--openssl-legacy-provider && npx expo export:web"
+    "build-web": "SET NODE_OPTIONS=--openssl-legacy-provider && npx expo export:web",
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",

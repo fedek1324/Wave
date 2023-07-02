@@ -1,10 +1,10 @@
 there is channel that crashes everything in setup
-don't use constants when use scroll view
 optimize api: use not set but append and delete
 rewrite everything so that it uses current user by default
 don't allow messages to be very big in interface
 add data validation in Firebase
 fix that channel utils imports channel
+don't use constants when use scroll view
 fix re-export in api.js
 cant skip quiz
 if hacker registrates and authorizes with api he can see admin features (but cant use it)
