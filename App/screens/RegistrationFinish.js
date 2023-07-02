@@ -6,7 +6,7 @@ import {
   Image,
   Text,
   Dimensions,
-  ScrollView,
+  ScrollView, useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: "flex-start",
     padding: paddings.mainHorizontalpadding,
-    position: "relative",
+    // position: "relative",
   },
   congratsContainer: {
     flexDirection: "row",
@@ -42,6 +42,8 @@ const styles = StyleSheet.create({
   },
   confetti: {
     height: 72,
+    width: 72,
+    marginLeft: 20
   },
   message: {
     ...fonts.regularBody,
@@ -67,6 +69,8 @@ export default ({ navigation }) => {
   let channelsElements = [];
   const [channels, setChannels] = useState(undefined);
 
+  const {height, width, scale, fontScale} = useWindowDimensions();
+
   if (!channels)
     getCurrentUser().then((user) => {
       getUserChannels(user.uid).then((channelsRes) => {
@@ -88,43 +92,44 @@ export default ({ navigation }) => {
     });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonPosition}>
-        <BoldButton
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Messages" }],
-            });
-          }}
-          text="Далее"
-        />
-      </View>
-      <StatusBar // не элемент а просто найстройка
-        barStyle="light-content"
-        backgroundColor={colors.blue}
+    <>
+      <BoldButton
+        style={styles.buttonPosition}
+        onPress={() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Messages" }],
+          });
+        }}
+        text="Далее"
       />
-      <SafeAreaView>
-        <ScrollView>
-          <View style={styles.congratsContainer}>
-            <Text style={styles.largeTitle}>Поздравляем с настройкой!</Text>
-            <Image
-              style={styles.confetti}
-              source={require("../assets/images/confetti.png")} // автоматически подбирает 1х 2х или 3х
-              resizeMode="contain"
-            />
-          </View>
-          <Text style={styles.message}>
-            Для Вас сформирован начальный список каналов. Каналы можно будет
-            настроить.
-          </Text>
-          <View
-            style={styles.channels} // TODO Image usage
-          >
-            {channels || <Text>Loading</Text>}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+      <View style={styles.container}>
+        <StatusBar // не элемент а просто найстройка
+          barStyle="light-content"
+          backgroundColor={colors.blue}
+        />
+        <SafeAreaView>
+          <ScrollView style={{height: height - 60}}>
+            <View style={styles.congratsContainer}>
+              <Text style={styles.largeTitle}>Поздравляем с настройкой!</Text>
+              <Image
+                style={styles.confetti}
+                source={require("../assets/images/confetti.png")} // автоматически подбирает 1х 2х или 3х
+                resizeMode="contain"
+              />
+            </View>
+            <Text style={styles.message}>
+              Для Вас сформирован начальный список каналов. Каналы можно будет
+              настроить.
+            </Text>
+            <View
+              style={styles.channels} // TODO Image usage
+            >
+              {channels || <Text>Loading</Text>}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
+    </>
   );
 };

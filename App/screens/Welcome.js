@@ -33,8 +33,7 @@ const styles = StyleSheet.create({
   },
   illustration: {
     width: 277*1,
-    height: 267*1, 
-    
+    height: 267*1,
   },
 });
 

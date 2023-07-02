@@ -1,7 +1,8 @@
-need to refresh page after change screen resolution
+there is channel that crashes everything in setup
+don't use constants when use scroll view
 optimize api: use not set but append and delete
-rewrite everyting so that it uses current user by default
-dont allow messages to be very big in interface
+rewrite everything so that it uses current user by default
+don't allow messages to be very big in interface
 add data validation in Firebase
 fix that channel utils imports channel
 fix re-export in api.js

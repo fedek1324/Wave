@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Text,
   Dimensions,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,8 +32,6 @@ import {
 import { BottomNavBar } from "../components/BottomNavBar";
 import { ChannelGroup } from "../components/ChannelGroup";
 
-const screen = Dimensions.get("window");
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,16 +46,15 @@ const styles = StyleSheet.create({
   channel: {
     marginBottom: 12,
   },
-  scrollContainer: {
-    // TODO change 150 to smth depending on botton nav bar
-    height: screen.height - 150
-  }
 });
 
 export default ({ navigation }) => {
   const [userChannels, setUserChannels] = useState(undefined);
   const [otherChannels, setOtherChannels] = useState(undefined);
   const [error, setError] = useState(undefined);
+
+  const {height, width, scale, fontScale} = useWindowDimensions();
+
 
   function mapChannelsToElements(channels) {
     return channels.map((channel) => (
@@ -81,13 +79,13 @@ export default ({ navigation }) => {
       const user = await getCurrentUser();
       const channelsRes = await getUserChannels(user.uid);
       console.log("got channels", channelsRes);
-  
+
       const userChannelsElements = mapChannelsToElements(channelsRes);
       setUserChannels(userChannelsElements);
-  
+
       const userChannelKeys = channelsRes.map((channelObj) => channelObj.key);
       console.log("userChannelKeys", userChannelKeys);
-  
+
       const otherChannelsRes = await getAllChannelsExcept(userChannelKeys);
       const otherChannelsElements = mapChannelsToElements(otherChannelsRes);
       console.log(otherChannelsElements);
@@ -97,7 +95,7 @@ export default ({ navigation }) => {
       setError(err);
     }
   }
-  
+
   if (!userChannels) {
     loadUserChannels();
   }
@@ -110,7 +108,7 @@ export default ({ navigation }) => {
           backgroundColor={colors.blue}
         />
         <SafeAreaView>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={{height: height - 150}}>
             <View style={styles.channels}>
               {error && <Text>{error.toString()}</Text>}
               {userChannels ? (

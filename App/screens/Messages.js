@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   Image,
   Text,
   ScrollView,
-  Dimensions,
+  Dimensions, useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,7 +18,7 @@ import Lock from "../assets/icons/lock";
 import PaperPlane from "../assets/icons/paperPlane";
 import { Message } from "../components/Message";
 
-import { getUserLatestMessages } from "../util/api";
+import {getCurrentUserChannelsKeys, getUserLatestMessages, isUserAdmin} from "../util/api";
 import { BottomNavBar } from "../components/BottomNavBar";
 
 // TODO padding bottom to scrollView
@@ -38,17 +38,14 @@ const styles = StyleSheet.create({
   message: {
     marginBottom: 25,
   },
-  scrollContainer: {
-    // TODO change 150 to smth depending on botton nav bar
-    height: screen.height - 150
-  }
 });
 
 export default ({ navigation }) => {
-  // createMessage("-NHVW9RRG7Vvk66kp7lK", new Date().toTimeString(), "Hello").then(res => console.log(res))
 
   let messageElements = [];
   const [messages, setMessages] = useState(undefined);
+
+  const {height, width, scale, fontScale} = useWindowDimensions();
 
   if (!messages) {
     getUserLatestMessages().then((messagesRes) => {
@@ -77,7 +74,7 @@ export default ({ navigation }) => {
         />
         <SafeAreaView>
           <View style={styles.messagesContainer}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>{messages || <Text>Loading</Text>}</ScrollView>
+            <ScrollView contentContainerStyle={{height: height - 150}}>{messages || <Text>Loading</Text>}</ScrollView>
           </View>
         </SafeAreaView>
       </View>
