@@ -55,7 +55,7 @@ export default ({ navigation }) => {
         </View>
         <View>
           <Text style={styles.welcomeText}>
-            Wave - это докска объявлений с уведомлениями
+            Wave - это докска объявлений
           </Text>
         </View>
         <View style={styles.buttonsContainer}>
