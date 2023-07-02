@@ -35,28 +35,30 @@ export default ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
-        barStyle="light-content"
-        backgroundColor={colors.blue}
-      />
-      <SafeAreaView>
-        <Text style={styles.title}>{username}</Text>
-        <RowItem
-          title="Logout"
-          onPress={() => {
-            logOut().then((res) => {
-              console.log(res);
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "Loading" }],
-              });
-            });
-          }}
-          textStyle={{ color: colors.systemRedLight }}
+    <>
+      <View style={styles.container}>
+        <StatusBar // не элемент а просто найстройка
+          barStyle="light-content"
+          backgroundColor={colors.blue}
         />
-      </SafeAreaView>
+        <SafeAreaView>
+          <Text style={styles.title}>{username}</Text>
+          <RowItem
+            title="Logout"
+            onPress={() => {
+              logOut().then((res) => {
+                console.log(res);
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Loading" }],
+                });
+              });
+            }}
+            textStyle={{ color: colors.systemRedLight }}
+          />
+        </SafeAreaView>
+      </View>
       <BottomNavBar navigation={navigation} />
-    </View>
+    </>
   );
 };

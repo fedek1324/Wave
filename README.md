@@ -14,4 +14,5 @@ The project was
   <li>Run metro bundler: <code>npm run start</code></li>
   <li>Click <code>w</code> to open web</li>
   <li>Toggle mobile device emulation in browser delevoper console to set proper resolution (app was developed for smartphone)<code>F12</code> and then <code>Ctrl+Shift+M</code></li>
+  <li>Refresh page (for scroll views to change their height)<code>Ctr+ R</code></li>
 </ol>

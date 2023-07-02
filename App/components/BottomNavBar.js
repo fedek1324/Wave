@@ -25,12 +25,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     height: 49,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
+    // position: "absolute",
+    // bottom: 0,
+    // left: 0,
+    // flex: 1,
+    // width: screen.width,
     backgroundColor: colors.navBarBackground,
-    width: screen.width,
     paddingVertical: 4,
+    // ...commonStyles.wrapperMobile
   },
   navBarItemContainer: {
     flexDirection: "column",

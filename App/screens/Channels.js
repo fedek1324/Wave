@@ -103,30 +103,31 @@ export default ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.blue}
-      />
-      <SafeAreaView>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.channels}>
-            {error && <Text>{error.toString()}</Text>}
-            {userChannels ? (
-              <ChannelGroup channels={userChannels} groupName="Мои каналы" />
-            ) : (
-              <Text>Loading</Text>
-            )}
-            {otherChannels ? (
-              <ChannelGroup channels={otherChannels} groupName="Другие каналы" />
-            ) : (
-              <Text>Loading</Text>
-            )}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+    <>
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={colors.blue}
+        />
+        <SafeAreaView>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.channels}>
+              {error && <Text>{error.toString()}</Text>}
+              {userChannels ? (
+                <ChannelGroup channels={userChannels} groupName="Мои каналы" />
+              ) : (
+                <Text>Loading</Text>
+              )}
+              {otherChannels ? (
+                <ChannelGroup channels={otherChannels} groupName="Другие каналы" />
+              ) : (
+                <Text>Loading</Text>
+              )}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
       <BottomNavBar navigation={navigation} />
-    </View>
+    </>
   );
-  
 };

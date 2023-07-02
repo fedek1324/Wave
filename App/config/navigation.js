@@ -1,7 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, TouchableOpacity } from "react-native";
 
 import Loading from "../screens/Loading";
 import Welcome from "../screens/Welcome";
@@ -58,6 +57,7 @@ const MainStackScreen = ({navigation}) => (
       options={{
         headerShown: true,
         title: "Объявления",
+        headerStyle: {},
       }}
     />
     <MainStack.Screen
@@ -74,6 +74,7 @@ const MainStackScreen = ({navigation}) => (
       options={{
         headerShown: true,
         title: "Настройки",
+
       }}
     />
     <MainStack.Screen

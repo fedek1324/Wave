@@ -1,3 +1,4 @@
+need to refresh page after change screen resolution
 optimize api: use not set but append and delete
 rewrite everyting so that it uses current user by default
 dont allow messages to be very big in interface

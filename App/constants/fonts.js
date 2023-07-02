@@ -1,8 +1,6 @@
 const fontFamilyDefault = 'sans-serif';
 
 export default {
-
-
   regularBody: {
     fontFamily: fontFamilyDefault,
     fontWeight: "regular",

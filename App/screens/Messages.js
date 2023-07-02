@@ -69,17 +69,19 @@ export default ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
-        barStyle="light-content"
-        backgroundColor={colors.blue}
-      />
-      <SafeAreaView>
-        <View style={styles.messagesContainer}>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>{messages || <Text>Loading</Text>}</ScrollView>
-        </View>
-      </SafeAreaView>
+    <>
+      <View style={styles.container}>
+        <StatusBar // не элемент а просто найстройка
+          barStyle="light-content"
+          backgroundColor={colors.blue}
+        />
+        <SafeAreaView>
+          <View style={styles.messagesContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>{messages || <Text>Loading</Text>}</ScrollView>
+          </View>
+        </SafeAreaView>
+      </View>
       <BottomNavBar navigation={navigation} />
-    </View>
+    </>
   );
 };
