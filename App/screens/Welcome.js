@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 export default ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
+      <StatusBar // not element just setting
         barStyle="light-content"
         backgroundColor={colors.blue}
       />
@@ -54,7 +54,7 @@ export default ({ navigation }) => {
         </View>
         <View>
           <Text style={styles.welcomeText}>
-            Wave - это докска объявлений
+            Wave is a bulletin board
           </Text>
         </View>
         <View style={styles.buttonsContainer}>
@@ -63,14 +63,14 @@ export default ({ navigation }) => {
             onPress={() => {
               navigation.push("Quiz");
             }}
-            text="Начать"
+            text="Begin"
           />
           <RegularButton
             icon={<Lock fill={colors.defaultSystemBlueLight} />}
             onPress={() => {
               navigation.push("Login");
             }}
-            text="Есть пароль"
+            text="Administrator"
           />
         </View>
       </SafeAreaView>

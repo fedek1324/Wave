@@ -30,7 +30,7 @@ const MainStackScreen = ({navigation}) => (
       component={Welcome}
       options={{
         headerShown: false,
-        title: "Приветствие",
+        title: "Welcome",
       }}
     />
     <MainStack.Screen
@@ -38,7 +38,7 @@ const MainStackScreen = ({navigation}) => (
       component={Quiz}
       options={{
         headerShown: true,
-        title: "Анкета",
+        title: "Quiz",
         // headerRight: () => (
         //   <HeaderButton text="Пропустить" onPress={() => navigation.push("RegistrationFinish")} />
         // ),
@@ -56,7 +56,7 @@ const MainStackScreen = ({navigation}) => (
       component={Announcements}
       options={{
         headerShown: true,
-        title: "Объявления",
+        title: "Messages",
         headerStyle: {},
       }}
     />
@@ -65,7 +65,7 @@ const MainStackScreen = ({navigation}) => (
       component={Channels}
       options={{
         headerShown: true,
-        title: "Каналы",
+        title: "Channels",
       }}
     />
     <MainStack.Screen
@@ -73,7 +73,7 @@ const MainStackScreen = ({navigation}) => (
       component={Settings}
       options={{
         headerShown: true,
-        title: "Настройки",
+        title: "Settings",
 
       }}
     />
@@ -82,7 +82,7 @@ const MainStackScreen = ({navigation}) => (
       component={Login}
       options={{
         headerShown: true,
-        title: "Вход",
+        title: "Login",
       }}
     />
     <MainStack.Screen
@@ -108,7 +108,7 @@ const ModalStack = createStackNavigator();
 const ModalStackScreen = () => (
   <ModalStack.Navigator screenOptions={{ presentation: "modal" }}>
     <ModalStack.Screen
-      name="Назад"
+      name="Back"
       component={MainStackScreen}
       options={{ headerShown: false }}
     />

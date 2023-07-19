@@ -23,12 +23,12 @@ const styles = StyleSheet.create({
 });
 
 export default ({ navigation }) => {
-  const [username, setUsername] = useState("Пользователь: ");
-  if (username === "Пользователь: ") {
+  const [username, setUsername] = useState("User: ");
+  if (username === "User: ") {
     getCurrentUser().then((user) => {
       setUsername(
-        `Пользователь: ${user.uid}\n${
-          user.email ? `Администратор: ${user.email}` : "Обычный пользователь"
+        `User: ${user.uid}\n${
+          user.email ? `Administrator: ${user.email}` : "Regular user"
         }`
       );
     });

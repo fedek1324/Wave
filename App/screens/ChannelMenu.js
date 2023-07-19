@@ -62,11 +62,11 @@ const SendMessageButton = ({ navigation, channel }) => (
     onPress={() => {
       console.log("Creating button send message. Got channel key:", channel.key);
       navigation.push("SendMessage", {
-        title: `Отправить в ${channel.name}`,
+        title: `Send to ${channel.name}`,
         channelKey : channel.key,
       });
     }}
-    text="Отправить сообщение"
+    text="Send message"
     style={styles.channelButton}
   />
 );
@@ -86,7 +86,7 @@ const LeftChannelButton = ({ navigation, channel }) => (
             routes: [{ name: "Channels" }],
         });
     }}
-    text="Покинуть канал"
+    text="Leave channel"
     style={styles.channelButton}
   />
 );
@@ -104,7 +104,7 @@ const EnterChannelButton = ({ navigation, channel }) => (
             routes: [{ name: "Channels" }],
         });
     }}
-    text="Вступить в канал"
+    text="Enter channel"
     style={styles.channelButton}
   />
 );
@@ -112,7 +112,7 @@ const EnterChannelButton = ({ navigation, channel }) => (
 const DeleteChannelButton = ({ navigation, channel }) => (
   <RegularButton
     onPress={async () => { }}
-    text="Удалить канал"
+    text="Delete channel"
     style={styles.channelButton}
   />
 );
@@ -120,7 +120,7 @@ const DeleteChannelButton = ({ navigation, channel }) => (
 const SoundNotificationsButton = ({ navigation, channel }) => (
   <RegularButton
     onPress={() => {}}
-    text="Звуковые уведомления"
+    text="Sound notifications"
     style={styles.channelButton}
   />
 );

@@ -53,15 +53,15 @@ const createAnonimousUserWithChannels = (
     signInAnonymouslyMy().then((res) => {
       console.log(res);
       // TODO - Change to channels id. So that we can rename channels and still subscribe here
-      const channels = ["НГТУ им Р. Е. Алексеева"];
-      if (institute !== "Другое") channels.push(institute);
-      if (course !== "Другое") channels.push(`${course} Курс`);
-      if (liveInDormitory) channels.push(`${dormitoryNumber} Общежитие`);
-      if (interestedInStudentActivity) channels.push("Студенческая жизнь");
+      const channels = ["NSTU n. a. R. E. Alekseev"];
+      if (institute !== "Other") channels.push(institute);
+      if (course !== "Other") channels.push(`${course} course`);
+      if (liveInDormitory) channels.push(`${dormitoryNumber} dormitory`);
+      if (interestedInStudentActivity) channels.push("Student life");
       if (
         interestedInStudentActivity &&
         studentOrganization &&
-        studentOrganization !== "Другое"
+        studentOrganization !== "Other"
       )
         channels.push(studentOrganization);
 
@@ -104,20 +104,20 @@ const Selection = ({ navigation, subject, options, setState }) => {
 export default ({ navigation }) => {
   const [institute, setInstitute] = useState(undefined);
   const institutes = [
-    "ИРИТ",
-    "ИТС",
-    "ИПТМ",
-    "ИЯиЭТФ",
-    "ИНЭЛ",
-    "ИФХТиМ",
-    "ИНЭУ",
-    "Другое",
+    "IRIT",
+    "ITS",
+    "IPTM",
+    "IAiETF",
+    "INEL",
+    "IFHTiM",
+    "INEU",
+    "Other",
   ];
 
   const [liveInDormitory, setLiveInDormitory] = useState(false);
 
   const [course, setCourse] = useState(undefined);
-  const courses = ["1", "2", "3", "4", "5", "6", "Другое"];
+  const courses = ["1", "2", "3", "4", "5", "6", "Other"];
 
   const [dormitoryNumber, setDormitoryNumber] = useState(undefined);
   const dormitoryNumbers = ["1", "2", "3", "4", "5", "6"];
@@ -127,11 +127,11 @@ export default ({ navigation }) => {
 
   const [studentOrganization, setstudentOrganization] = useState(undefined);
   const studentOrganizations = [
-    "Профсоюзная организация НГТУ",
-    "Студенческий совет",
-    "РСМ",
-    "Отряды",
-    "Другое",
+    "NSTU Trade Union Organization",
+    "Student Council",
+    "RSM",
+    "Squads",
+    "Other",
   ];
 
   const [error, setError] = useState(undefined);
@@ -146,38 +146,38 @@ export default ({ navigation }) => {
         <View style={styles.content}>
           <Selection
             navigation={navigation}
-            subject="Институт"
+            subject="Institute"
             options={institutes}
             setState={setInstitute}
           />
           <Selection
             navigation={navigation}
-            subject="Курс"
+            subject="Course"
             options={courses}
             setState={setCourse}
           />
           <MySwitch
-            text="Живу в общежитии"
+            text="I live in a dormitory"
             state={liveInDormitory}
             changeState={setLiveInDormitory}
           />
           {liveInDormitory && (
             <Selection
               navigation={navigation}
-              subject="Номер общежития"
+              subject="Dormitory number"
               options={dormitoryNumbers}
               setState={setDormitoryNumber}
             />
           )}
           <MySwitch
-            text="Интересует студенческая жизнь"
+            text="Interested in student life"
             state={interestedInStudentActivity}
             changeState={setInterestedInStudentActivity}
           />
           {interestedInStudentActivity && (
             <Selection
               navigation={navigation}
-              subject="Организация (необязательно)"
+              subject="Student organization (not necessary)"
               options={studentOrganizations}
               setState={setstudentOrganization}
             />
@@ -186,7 +186,7 @@ export default ({ navigation }) => {
 
           <View style={styles.buttonContainer}>
             <BoldButton
-              text="Готово"
+              text="Ok"
               onPress={() => {
                 console.log(
                   "Data",
@@ -202,8 +202,8 @@ export default ({ navigation }) => {
                   course === undefined ||
                   (liveInDormitory && dormitoryNumber === undefined)
                 ) {
-                  console.log("Введите обязательные поля");
-                  setError("Введите обязательные поля");
+                  console.log("Enter the required fields");
+                  setError("Enter the required fields");
                 } else {
                   setError(undefined);
                   createAnonimousUserWithChannels(

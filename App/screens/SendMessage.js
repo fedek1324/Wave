@@ -45,14 +45,14 @@ export default ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
+      <StatusBar // not element just setup
         barStyle="light-content"
         backgroundColor={colors.blue}
       />
       <SafeAreaView>
         <TextInput
           style={styles.input}
-          placeholder="Введите тему сообщения"
+          placeholder="Enter message title"
           onChangeText={setMessageTitle}
         />
         <View
@@ -68,7 +68,7 @@ export default ({ navigation, route }) => {
             numberOfLines={4}
             onChangeText={(text) => setMessageText(text)}
             style={{ padding: 10 }}
-            placeholder="Введите сообщение"
+            placeholder="Enter message"
           />
         </View>
         <BoldButton
@@ -82,7 +82,7 @@ export default ({ navigation, route }) => {
               });
             });
           }}
-          text="Отправить"
+          text="Send"
         />
       </SafeAreaView>
     </View>

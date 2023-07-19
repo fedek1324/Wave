@@ -101,7 +101,7 @@ export default ({ navigation }) => {
             routes: [{ name: "Messages" }],
           });
         }}
-        text="Далее"
+        text="Next"
       />
       <View style={styles.container}>
         <StatusBar // не элемент а просто найстройка
@@ -111,7 +111,7 @@ export default ({ navigation }) => {
         <SafeAreaView>
           <ScrollView style={{height: height - 60}}>
             <View style={styles.congratsContainer}>
-              <Text style={styles.largeTitle}>Поздравляем с настройкой!</Text>
+              <Text style={styles.largeTitle}>Congratulations on the setup!</Text>
               <Image
                 style={styles.confetti}
                 source={require("../assets/images/confetti.png")} // автоматически подбирает 1х 2х или 3х
@@ -119,8 +119,8 @@ export default ({ navigation }) => {
               />
             </View>
             <Text style={styles.message}>
-              Для Вас сформирован начальный список каналов. Каналы можно будет
-              настроить.
+              An initial list of channels has been formed for you. Channels can be
+              configured later.
             </Text>
             <View
               style={styles.channels} // TODO Image usage

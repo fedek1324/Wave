@@ -1,10 +1,26 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+
+import {
+  getDatabase,
   child,
   ref,
   set,
   get,
   push,
   update,
+  query,
+  orderByChild,
+  equalTo,
 } from "firebase/database";
 
 import {
@@ -16,49 +32,29 @@ import {
 import {
   getAllChannelsExcept,
   isChannelExists,
-  createChannel,
-  getChannelByKey
+  createChannel
 } from "./firebaseApiFunctions/channels"
-
-import {
-  setUserChannels,
-} from "./firebaseApiFunctions/userChannels";
 
 import {
   getChannelKeyFromName,
   getChannelKeysFromNames,
   getChannelNameFromKey,
-  getChannelsArrayFromKeys
 } from "./firebaseApiFunctions/channelsUtils";
-
-import {
-  logOut,
-  getCurrentUser,
-  isUserAdmin,
-  signInAnonymouslyMy,
-  signInWithEmail
-} from "./firebaseApiFunctions/auth"
 
 export {
   getAllChannelsExcept,
   isChannelExists,
-  createChannel,
-  getChannelByKey,
+  createChannel
+} // re-export doesnt work
 
-  setUserChannels,
-
+export {
   getChannelKeyFromName,
   getChannelKeysFromNames,
   getChannelNameFromKey,
-  getChannelsArrayFromKeys,
+}
 
-  logOut,
-  getCurrentUser,
-  isUserAdmin,
-  signInAnonymouslyMy,
-  signInWithEmail
-} // re-export doesnt work
-
+let auth;
+let database;
 
 // function list
 
@@ -68,32 +64,28 @@ export {
 // getChannelKeyFromName    ./channelsUtils
 // getChannelKeysFromNames  ./channelsUtils
 // getChannelNameFromKey    ./channelsUtils
-// getChannelsArrayFromKeys ./channelsUtils
 // getAllChannelsExcept     ./channels
 // isChannelExists          ./channels
 // createChannel            ./channels
-// getChannelById           ./channels
 
-// setChannelsToUser        ./userChannels.js     not in export
-// setUserToChannels        ./userChannels.js     not in export
-// setUserChannels          ./userChannels.js     accepts channelNames or channelKeys
-
-// signInAnonymouslyMy      ./auth.js
-// signInWithEmail          ./auth.js
-// getCurrentUser           ./auth.js
-// logOut                   ./auth.js
-// isUserAdmin              ./auth.js
-
-// createMessage                here
-// getChannelMessages           here
-// getUserLatestMessages        here
-// getUserById                  here
-// initUserChannelsList         here
-// getCurrentUserChannelsKeys   here
+// setChannelsToUser
+// setUserToChannels
+// setUserChannels accepts channelNames
 
 
-let auth;
-let database;
+// getUserById
+// createUser
+// signInAnonymouslyMy
+// signInWithEmail
+// getCurrentUser
+// logOut
+
+// createMessage
+// getChannelsArrayFromKeys
+// getCurrentUserChannelsKeys
+// getChannelMessages
+// getUserLatestMessages
+
 
 export async function apiInit() {
   await initializeFirebase();
@@ -101,7 +93,17 @@ export async function apiInit() {
   database = getDatabaseInstance();
 }
 
+
 export const getUserById = (userId) => {
+  // Обернули промис в промис
+  // Изначально я не понимал почему
+  // get.then( (snapshot)=> return snapshot.val())
+  // Ничего не возвращет в функцию getUser в которой он прописан
+  // Это потому что он возвращал в контекст then()
+  // Нельзя вернуть зн-е из промиса из функции в которой он вызван
+  // Сейчас он возвращает результат в resolve который стоит выше в контексте
+  // Мы вызываем промис который вызывает другой пропис и получает его результат в resolve
+  // Всё это чтобы пользователю не пришлось вызывать get(..) и потом делать result.val()
   const dbRef = ref(database);
   const getUserFireBasePromise = get(child(dbRef, `users/${userId}`)); // Promise
   return new Promise((resolve, reject) => {
@@ -109,13 +111,40 @@ export const getUserById = (userId) => {
       if (snapshot.exists()) {
         resolve(snapshot.val());
       } else {
-        const err = new Error("No user data available");
-        err.name = "NoUserData"
-        reject(err);
+        reject(Error("No user data available"));
       }
     });
   });
 };
+
+export const getChannelById = (channelId) => {
+  const dbRef = ref(database);
+  const getChannelFireBasePromise = get(child(dbRef, `channels/${channelId}`)); // Promise
+  return new Promise((resolve, reject) => {
+    getChannelFireBasePromise.then((snapshot) => {
+      if (snapshot.exists()) {
+        const newChannelObject = { key: channelId, ...snapshot.val() };
+        console.log("getChannelById: got channel", newChannelObject);
+        resolve(newChannelObject);
+      } else {
+        reject(Error(`No channel available with key ${channelId}`));
+      }
+    });
+  });
+};
+
+// TODO rename getChannelById to getChannelByKEy
+function getChannelsArrayFromKeys(channelKeys) {
+  const dbRef = ref(database);
+  return new Promise((resolve, reject) => {
+    const getChannelPromises = [
+      ...channelKeys.map((channelId) => getChannelById(channelId)),
+    ];
+    Promise.all(getChannelPromises)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+}
 
 export const getUserChannels = (userId) => {
   const dbRef = ref(database);
@@ -129,37 +158,98 @@ export const getUserChannels = (userId) => {
   });
 };
 
-
-export async function initUserChannelsList() {
+const createUser = (email, password) => {
   return new Promise((resolve, reject) => {
-    getCurrentUser()
-        .then(user => {
-          setUserChannels({userId: user.uid, channelsNames : ["НГТУ им Р. Е. Алексеева"]}).then(
-            (setChannelResult)=> {
-              resolve(true);
-            }
-          );
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          reject(errorMessage);
-        });
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log("user", user);
+        resolve(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("errorCode", errorCode);
+        console.log("errorMessage", errorMessage);
+        // ..
+        reject(errorMessage);
+      });
+  });
+};
+
+// may be registration or login
+export function signInAnonymouslyMy() {
+  return new Promise((resolve, reject) => {
+    signInAnonymously(auth)
+      .then(() => {
+        resolve("sign in anonimously ok");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        reject(error);
+      });
   });
 }
 
-
-export function getCurrentUserChannelsKeys() {
+export function signInWithEmail(email, password) {
   return new Promise((resolve, reject) => {
-    getCurrentUser().then((userAccount) => {
-      console.log("got userAccount", userAccount.uid);
-      getUserById(userAccount.uid)
-        .then((userData) => {
-          const userChannels = Object.keys(userData.channels);
-          resolve(userChannels);
-        })
-        .catch(err => reject (err));
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUserChannels(user.uid, ["НГТУ им Р. Е. Алексеева"]).then(
+          (setChannelResult) => {
+            resolve(user);
+          }
+        );
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        reject(errorMessage);
+      });
+  });
+}
+
+export function getCurrentUser() {
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        resolve(user);
+        // console.log(user);
+        // ...
+      } else {
+        // User is signed out
+        // ...
+        // console.log("error getting user");
+        resolve(null);
+      }
     });
+  });
+}
+
+export function isUserAdmin(uid) {
+  return new Promise((resolve, reject) => {
+    getCurrentUser().then((user) => {
+      console.log("isUserAdmin got user", user);
+      resolve(!user.isAnonymous);
+    });
+  });
+}
+
+export function logOut() {
+  return new Promise((resolve, reject) => {
+    auth
+      .signOut()
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
   });
 }
 
@@ -167,7 +257,7 @@ export function createMessage(channelId, text, title) {
   return new Promise((resolve, reject) => {
     const dbRef = ref(database);
     const newMessageKey = push(
-        child(dbRef, `messagesByChannels/${channelId}`)
+      child(dbRef, `messagesByChannels/${channelId}`)
     ).key;
     const updates = {};
     updates[`/messagesByChannels/${channelId}/${newMessageKey}`] = {
@@ -182,6 +272,17 @@ export function createMessage(channelId, text, title) {
   });
 }
 
+export function getCurrentUserChannelsKeys() {
+  return new Promise((resolve, reject) => {
+    getCurrentUser().then((userAccount) => {
+      console.log("got userAccount", userAccount.uid);
+      getUserById(userAccount.uid).then((userData) => {
+        const userChannels = Object.keys(userData.channels);
+        resolve(userChannels);
+      });
+    });
+  });
+}
 
 export async function getChannelMessages(channelKey) {
   try {
@@ -212,7 +313,7 @@ export async function getChannelMessages(channelKey) {
 }
 
 export async function getUserLatestMessages() {
-  // TODO Add algorithm to not load all messages
+  // TODO Add algoritm to not load all messages
   try {
     const channels = await getCurrentUserChannelsKeys();
     const getChannelMessagesPromises = channels.map((channelKey) =>

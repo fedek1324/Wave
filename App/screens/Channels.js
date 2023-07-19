@@ -66,7 +66,7 @@ export default ({ navigation }) => {
         description={channel.description}
         onPress={() => {
           navigation.push("ChannelMenu", {
-            title: `Меню канала ${channel.name}`,
+            title: `Channel menu - ${channel.name}`,
             channelKey: channel.key,
           });
         }}
@@ -112,12 +112,12 @@ export default ({ navigation }) => {
             <View style={styles.channels}>
               {error && <Text>{error.toString()}</Text>}
               {userChannels ? (
-                <ChannelGroup channels={userChannels} groupName="Мои каналы" />
+                <ChannelGroup channels={userChannels} groupName="My channels" />
               ) : (
                 <Text>Loading</Text>
               )}
               {otherChannels ? (
-                <ChannelGroup channels={otherChannels} groupName="Другие каналы" />
+                <ChannelGroup channels={otherChannels} groupName="Other channels" />
               ) : (
                 <Text>Loading</Text>
               )}

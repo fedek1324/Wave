@@ -47,7 +47,7 @@ export const BottomNavBar = ({ navigation, style = {} }) => (
   <View style={[styles.bottomNavBarContainer, style]}>
     <NavBarItem
       icon={<Squares />}
-      title="Каналы"
+      title="Channels"
       onPressFunction={() => {
         navigation.reset({
           index: 0,
@@ -57,7 +57,7 @@ export const BottomNavBar = ({ navigation, style = {} }) => (
     />
     <NavBarItem
       icon={<Bell />}
-      title="Объявления"
+      title="Messages"
       onPressFunction={() => {
         navigation.reset({
           index: 0,
@@ -67,7 +67,7 @@ export const BottomNavBar = ({ navigation, style = {} }) => (
     />
     <NavBarItem
       icon={<Sliders />}
-      title="Настройки"
+      title="Settings"
       onPressFunction={() => {
         navigation.reset({
           index: 0,

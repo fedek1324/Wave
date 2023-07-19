@@ -45,7 +45,7 @@ export default ({ navigation }) => {
   const [password, setPassword] = useState(undefined);
   return (
     <View style={styles.container}>
-      <StatusBar // не элемент а просто найстройка
+      <StatusBar // not element just setup
         barStyle="light-content"
         backgroundColor={colors.blue}
       />
@@ -54,12 +54,12 @@ export default ({ navigation }) => {
           {error && <Text>{error}</Text>}
           <TextInput
             style={styles.input}
-            placeholder="Введите почту"
+            placeholder="Enter email"
             onChangeText={setEmail}
           />
           <TextInput
             style={styles.input}
-            placeholder="Введите пароль"
+            placeholder="Enter password"
             onChangeText={setPassword}
             secureTextEntry
           />
@@ -96,7 +96,7 @@ export default ({ navigation }) => {
                     }
                 }
             }}
-            text="Войти"
+            text="Login"
           />
         </View>
       </SafeAreaView>
